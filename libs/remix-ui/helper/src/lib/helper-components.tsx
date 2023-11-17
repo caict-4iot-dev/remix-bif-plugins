@@ -75,7 +75,8 @@ export const storageFullMessage = () => (
 export const recursivePasteToastMsg = () => <div>File(s) to paste is an ancestor of the destination folder</div>
 
 export const logBuilder = (msg: string) => {
-  return <pre>{msg}</pre>
+  // return <pre>{msg}</pre>
+  return msg
 }
 
 export const cancelProxyMsg = () => (

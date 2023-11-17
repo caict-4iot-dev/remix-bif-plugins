@@ -1,0 +1,61 @@
+{
+  "name": "udapp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/udapp/src",
+  "projectType": "application",
+  "implicitDependencies": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/udapp",
+        "index": "apps/udapp/src/index.html",
+        "baseHref": "/",
+        "main": "apps/udapp/src/main.tsx",
+        "polyfills": "apps/udapp/src/polyfills.ts",
+        "tsConfig": "apps/udapp/tsconfig.app.json",
+        "assets": [
+          "apps/udapp/src/favicon.ico",
+          "apps/udapp/src/assets"
+        ],
+        "styles": [
+          "apps/udapp/src/styles.css"
+        ],
+        "scripts": [],
+        "webpackConfig": "apps/udapp/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/udapp/src/environments/environment.ts",
+              "with": "apps/udapp/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "udapp:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "udapp:build:development"
+        },
+        "production": {
+          "buildTarget": "udapp:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

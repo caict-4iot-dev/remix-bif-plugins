@@ -142,8 +142,23 @@
             "@remixproject/solidity-compiler-plugin": [
                 "apps/solidity-compiler/src/index.ts"
             ],
+            "@remixproject/udapp-plugin": [
+                "apps/udapp/src/index.ts"
+            ],
             "@remixproject/locales": [
                 "apps/remix-ide/src/app/tabs/locales/index.ts"
+            ],
+            "@remixproject/blockchain": [
+                "apps/remix-ide/src/blockchain/blockchain.tsx"
+            ],
+            "@remixproject/udapp": [
+                "apps/remix-ide/src/app/udapp/index.js"
+            ],
+            "@remixproject/network-module": [
+                "apps/remix-ide/src/app/tabs/network-module.js"
+            ],
+            "@remixproject/config": [
+                "apps/remix-ide/src/config.js"
             ],
             "remix-node": [
                 "libs/remix-node/src/index.ts"
