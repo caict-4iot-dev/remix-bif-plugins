@@ -1,18 +1,8 @@
 const {composePlugins, withNx} = require('@nrwl/webpack')
 const {withReact} = require('@nrwl/react')
 const webpack = require('webpack')
-const version = require('../../package.json').version
-const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-
-const versionData = {
-  version: version,
-  timestamp: Date.now(),
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
-}
-
-fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
@@ -90,7 +80,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     ignored: /node_modules/
   }
 
-  config.devServer.port = 3002;
+  if (process.env.NODE_ENV !== 'production') {
+    config.devServer.port = 3002;
+  }
 
   return config
 })

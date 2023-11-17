@@ -78,7 +78,9 @@ module.exports = composePlugins(withNx(), (config) => {
     ignored: /node_modules/
   }
 
-  config.devServer.port = 3003;
+  if (process.env.NODE_ENV !== 'production') {
+    config.devServer.port = 3003;
+  }
 
   return config
 })
