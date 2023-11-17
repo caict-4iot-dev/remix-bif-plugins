@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const version = require('../package.json').version
+
+program
+  .command('version')
+  .description("outputs version number")
+  .action(() => {
+    console.log(version)
+    process.exit(0)
+  })
+
+program
+  .command('help')
+  .description("outputs usage information")
+  .action(() => {
+    program.help()
+    process.exit(0)
+  })
+
+program
+  .command('start')
+  .option('-p, --port [port]', 'specify port', 8545)
+  .option('-b, --ip [host]', 'specify host', '127.0.0.1')
+  .option('-c, --coinbase [coinbase]', 'specify coinbase', '0x0000000000000000000000000000000000000000')
+  .option('--rpc', 'run rpc server only', true)
+  .option('--details', 'display payloads for every requests and their responses', false)
+  .action((option) => {
+    console.log('coinbase: ', option.coinbase)
+    console.log('rpc: ', option.rpc)
+    console.log('details: ', option.details)
+    console.log('host: ', option.ip)
+    console.log('port: ', option.port)
+    const Server = require('../src/server')
+    const server = new Server({
+      coinbase: option.coinbase,
+      rpc: option.rpc,
+      logDetails: option.details
+    })
+    server.start(option.ip, option.port)
+  })
+
+program.parse(process.argv)
+
