@@ -14,7 +14,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const self = this
     this.web3Provider = {
       sendAsync (payload, callback) {
-        return self.call('web3Provider', 'sendAsync', payload)
+        return self.call('iframe-udapp', 'sendAsync', payload)
       }
     }
     this._web3 = new Web3(this.web3Provider)
@@ -97,7 +97,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const target = (address && traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
     const targetAddress = target || receipt.contractAddress || receipt.to
     const codeAtAddress = await this._web3.eth.getCode(targetAddress)
-    const output = await this.call('fetchAndCompile', 'resolve', targetAddress, codeAtAddress, '.debug')
+    const output = await this.call('iframe-udapp', 'resolve', targetAddress, codeAtAddress, '.debug')
     if (output) {
       return new CompilerAbstract(output.languageversion, output.data, output.source)
     }

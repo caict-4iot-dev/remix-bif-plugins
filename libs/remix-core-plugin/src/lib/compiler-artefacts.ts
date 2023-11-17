@@ -32,7 +32,7 @@ export class CompilerArtefacts extends Plugin {
       this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
     }
 
-    this.plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
+    this.plugin.on('iframe-solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
       this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source, input)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
