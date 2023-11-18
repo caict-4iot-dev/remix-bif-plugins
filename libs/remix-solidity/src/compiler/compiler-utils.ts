@@ -1,8 +1,8 @@
 import * as semver from 'semver'
 /* global Worker */
 
-export const baseURLBin = 'https://binaries.soliditylang.org/bin'
-export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
+export const baseURLBin = `${location.origin}/assets/bin`;
+export const baseURLWasm = `${location.origin}/assets/wasm`;
 
 export const pathToURL = {}
 

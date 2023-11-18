@@ -54,7 +54,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     customVersions: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.4.26+commit.7bd958c6d.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
@@ -302,10 +302,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const fetchAllVersion = async (callback) => {
     let selectedVersion, allVersionsWasm, isURL
     let allVersions = [
-      {
-        path: 'builtin',
-        longVersion: 'latest local version - ' + state.defaultVersion
-      }
+      // {
+      //   path: 'builtin',
+      //   longVersion: 'latest local version - ' + state.defaultVersion
+      // }
     ]
     // fetch normal builds
     const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
@@ -577,7 +577,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // resort to non-worker version in that case.
     if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
     if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
-      compileTabLogic.compiler.loadVersion(true, url)
+      // compileTabLogic.compiler.loadVersion(true, url)
+      compileTabLogic.compiler.loadVersion(false, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)
     }

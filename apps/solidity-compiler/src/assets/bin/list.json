@@ -1,0 +1,10 @@
+{
+  "builds": [
+    {
+      "path": "soljson-v0.4.26+commit.7bd958c6d.js",
+      "version": "0.4.26",
+      "build": "commit.7bd958c6d",
+      "longVersion": "0.4.26+commit.7bd958c6d"
+    }
+  ]
+}
