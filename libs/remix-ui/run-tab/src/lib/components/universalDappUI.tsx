@@ -33,13 +33,13 @@ export function UniversalDappUI(props: UdappProps) {
       setContractABI(props.instance.abi)
     }
     if (props.instance.address) {
-      let address =
-        (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') +
-        // @ts-ignore
-        props.instance.address.toString('hex')
+      // let address =
+      //   (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') +
+      //   // @ts-ignore
+      //   props.instance.address.toString('hex')
 
-      address = ethJSUtil.toChecksumAddress(address)
-      setAddress(address)
+      // address = ethJSUtil.toChecksumAddress(address)
+      setAddress(props.instance.address)
     }
   }, [props.instance.address])
 
@@ -235,11 +235,11 @@ export function UniversalDappUI(props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-          <div className="d-flex" data-id="instanceContractBal">
+          {/* <div className="d-flex" data-id="instanceContractBal">
             <label>
               <FormattedMessage id="udapp.balance" />: {instanceBalance} ETH
             </label>
-          </div>
+          </div> */}
           {contractABI &&
             contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
@@ -279,7 +279,7 @@ export function UniversalDappUI(props: UdappProps) {
               )
             })}
         </div>
-        <div className="d-flex flex-column">
+        {/* <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               <FormattedMessage id="udapp.lowLevelInteractions" />
@@ -318,7 +318,7 @@ export function UniversalDappUI(props: UdappProps) {
               {llIError}
             </label>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

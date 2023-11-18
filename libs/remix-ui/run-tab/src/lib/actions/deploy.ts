@@ -10,6 +10,7 @@ import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDec
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
 import Web3 from "web3"
+import bif from '../bif';
 
 declare global {
   interface Window {
@@ -166,7 +167,7 @@ export const createInstance = async (
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
     const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
-    plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    plugin.compilersArtefacts.addResolvedContract(address, data);
     if (plugin.REACT_API.ipfsChecked) {
       _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', plugin.REACT_API.networkName])
       publishToStorage('ipfs', selectedContract)
@@ -193,40 +194,24 @@ export const createInstance = async (
   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
 
   const currentParams = !isProxyDeployment && !isContractUpgrade ? args : ''
-  let overSize
-  try {
-    overSize = await selectedContract.isOverSizeLimit(currentParams)
-  } catch (error) {
-    return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
-  }
-  if (overSize && (overSize.overSizeEip170 || overSize.overSizeEip3860)) {
-    return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(overSize), 'Force Send', 'Cancel', () => {
-      deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
-        continueCb: (error, continueTxExecution, cancelCb) => {
-          continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
-        },
-        promptCb: (okCb, cancelCb) => {
-          promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
-        },
-        statusCb,
-        finalCb
-      }, confirmationCb)
-    }, () => {
-      const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
-
-      return terminalLogger(plugin, log)
-    }))
-  }
-  deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
-    continueCb: (error, continueTxExecution, cancelCb) => {
-      continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+  bif.deployContract(
+    selectedContract,
+    { gasLimit: plugin.REACT_API.gasLimit, sendValue: plugin.REACT_API.sendValue, sendUnit: plugin.REACT_API.sendUnit },
+    currentParams,
+    contractMetadata,
+    compilerContracts,
+    {
+      continueCb: (error, continueTxExecution, cancelCb) => {
+        continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb);
+      },
+      promptCb: (okCb, cancelCb) => {
+        promptHandler(dispatch, passphrasePrompt, okCb, cancelCb);
+      },
+      statusCb,
+      finalCb,
     },
-    promptCb: (okCb, cancelCb) => {
-      promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
-    },
-    statusCb,
-    finalCb
-  }, confirmationCb)
+    confirmationCb,
+  );
 }
 
 const deployContract = (plugin: RunTab, selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
@@ -262,9 +247,9 @@ export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contr
   )
 }
 
-export const getContext = (plugin: RunTab) => {
-  return plugin.blockchain.context()
-}
+export const getContext = (plugin: RunTab): 'memory' | 'blockchain' => {
+  return 'blockchain';
+};
 
 export const syncContractsInternal = async (plugin: RunTab) => {
   if (await plugin.call('manager', 'isActive', 'truffle')) {
@@ -278,7 +263,7 @@ export const syncContractsInternal = async (plugin: RunTab) => {
   }
 }
 
-export const runTransactions = (
+export const runTransactions = async (
   plugin: RunTab,
   dispatch: React.Dispatch<any>,
   instanceIndex: number,
@@ -297,10 +282,13 @@ export const runTransactions = (
   if (lookupOnly) callinfo = 'call'
   else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
   else callinfo = 'transact'
-  _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
+  // _paq.push(['trackEvent', 'udapp', callinfo, plugin.blockchain.getCurrentNetworkStatus().network.name])
 
   const params = funcABI.type !== 'fallback' ? inputsValues : ''
-  plugin.blockchain.runOrCallContractMethod(
+  // const compilerContracts = (plugin.compilersArtefacts.get(address) || plugin.compilersArtefacts.getLastCompilationResult()).getContracts();
+  // const currentFile = await plugin.call('')
+  const compilerContracts = (await plugin.compilersArtefacts.getCompilerAbstract(plugin.REACT_API.contracts.currentFile)).getContracts()
+  bif.runOrCallContractMethod(
     contractName,
     contractABI,
     funcABI,
@@ -311,30 +299,34 @@ export const runTransactions = (
     lookupOnly,
     logMsg,
     (msg) => {
-      const log = logBuilder(msg)
+      const log = logBuilder(msg);
 
-      return terminalLogger(plugin, log)
+      return terminalLogger(plugin, log);
     },
     (returnValue) => {
-      const response = txFormat.decodeResponse(returnValue, funcABI)
+      const response = txFormat.decodeResponse(returnValue, funcABI);
 
-      dispatch(setDecodedResponse(instanceIndex, response, funcIndex))
+      dispatch(setDecodedResponse(instanceIndex, response, funcIndex));
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-      confirmationHandler(plugin, dispatch, mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)
+      confirmationHandler(plugin, dispatch, mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb);
     },
     (error, continueTxExecution, cancelCb) => {
-      continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+      continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb);
     },
     (okCb, cancelCb) => {
-      promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
-    }
-  )
+      promptHandler(dispatch, passphrasePrompt, okCb, cancelCb);
+    },
+    compilerContracts,
+  );
 }
 
 export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {
-  return plugin.blockchain.getInputs(funcABI)
-}
+  if (!funcABI.inputs) {
+    return '';
+  }
+  return txHelper.inputParametersDeclarationToString(funcABI.inputs);
+};
 
 export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   if (plugin.REACT_API?.instances?.instanceList?.length) {

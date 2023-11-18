@@ -22,10 +22,10 @@ export class UdappClientApi extends PluginClient {
     const configStorage = new Storage('config-v0.8:');
     // load app config
     this.config = new Config(configStorage);
-    this.blockchain = new Blockchain(this);
+    // this.blockchain = new Blockchain(this);
     this.compilersArtefacts = new CompilerArtefacts(this);
-    makeUdapp(this.blockchain, this);
-    this.networkModule = new NetworkModule(this.blockchain);
+    // makeUdapp(this.blockchain, this);
+    // this.networkModule = new NetworkModule(this.blockchain);
   }
 
   onReady(api) {

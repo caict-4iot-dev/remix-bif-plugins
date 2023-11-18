@@ -81,7 +81,7 @@ export class OffsetToLineColumnConverter extends Plugin {
    * called by plugin API
    */
   activate () {
-    this.on('iframe-solidity', 'compilationFinished', (success, data, source, input, version) => {
+    this.on('bif-solidity', 'compilationFinished', (success, data, source, input, version) => {
       this.clear()
     })
   }

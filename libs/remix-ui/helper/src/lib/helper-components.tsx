@@ -1,5 +1,6 @@
 import {LayoutCompatibilityReport} from '@openzeppelin/upgrades-core/dist/storage/report'
 import React from 'react'
+import ReactDOMServer from 'react-dom/server';
 
 export const fileChangedToastMsg = (from: string, path: string) => (
   <div>
@@ -78,6 +79,19 @@ export const logBuilder = (msg: string) => {
   // return <pre>{msg}</pre>
   return msg
 }
+
+export const logBuildViewOnExplorer = (explorer: string, txHash: string) => {
+  return ReactDOMServer.renderToString(
+    <div>
+      <a
+        href={`${explorer}/tx/${txHash}`}
+        target="_blank"
+      >
+        在区块链浏览器上查看
+      </a>
+    </div>,
+  );
+};
 
 export const cancelProxyMsg = () => (
   <div>

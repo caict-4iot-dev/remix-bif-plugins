@@ -4,7 +4,7 @@
   "udapp.gasLimit": "Gas 上限",
   "udapp.tooltipText4": "默认 Gas 限制为 3M。根据需要进行调整。",
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",
-  "udapp.value": "以太币数量",
+  "udapp.value": "星火令数量",
   "udapp.tooltipText5": "输入金额并选择单位",
   "udapp._comment_contractDropdownUI.tsx": "libs/remix-ui/run-tab/src/lib/components/contractDropdownUI.tsx",
   "udapp.contract": "合约",

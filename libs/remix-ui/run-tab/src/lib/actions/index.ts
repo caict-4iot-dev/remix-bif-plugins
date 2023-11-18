@@ -5,13 +5,14 @@ import { resetAndInit, setupEvents } from './events'
 import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
-  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
-import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
+  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath, setBifConfig } from './actions'
+import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade, terminalLogger } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI, OverSizeLimit } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
 import { runCurrentScenario, storeScenario } from './recorder'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
+import { logBuilder, logBuildViewOnExplorer } from '@remix-ui/helper';
 
 declare global {
   interface Window {
@@ -28,6 +29,18 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
   setupEvents(plugin, dispatch)  
   resetAndInit(plugin)
 }
+
+export const logHtml = (msg: string) => terminalLogger(plugin, logBuilder(msg));
+export const logViewOnExplorer = (explorer: string, txHash: string) => {
+  plugin.call('terminal', 'logHtml', {
+    type: 'log',
+    value: logBuildViewOnExplorer(explorer, txHash),
+  });
+};
+export const logKnownTransaction = (msg: any) => {
+  plugin.call('terminal', 'log', msg);
+};
+export const setBif = (bif: any) => setBifConfig(dispatch, bif);
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
 export const setUnitValue = (unit: 'ether' | 'finney' | 'gwei' | 'wei') => setUnit(dispatch, unit)

@@ -9,7 +9,7 @@ import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-u
 import { title } from 'process'
 const _paq = (window._paq = window._paq || [])
 
-export function ContractDropdownUI(props: ContractDropdownProps) {
+export function ContractDropdownUI(props: any) {
   const intl = useIntl()
   const [abiLabel, setAbiLabel] = useState<{
     display: string
@@ -64,7 +64,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
   }, [props.exEnvironment, props.networkName])
 
   useEffect(() => {
-    if (!loadFromAddress || !ethJSUtil.isValidAddress(loadedAddress)) enableAtAddress(false)
+    if (!loadFromAddress) enableAtAddress(false)
   }, [loadedAddress])
 
   useEffect(() => {
@@ -259,13 +259,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
   }
 
   const loadFromAddress = () => {
-    let address = loadedAddress
+    const address = loadedAddress
     if (address == '') return
     try {
-      if (!ethJSUtil.isValidChecksumAddress(address)) {
-        props.tooltip(checkSumWarning())
-        address = ethJSUtil.toChecksumAddress(address)
-      }
+      // if (!ethJSUtil.isValidChecksumAddress(address)) {
+      //   props.tooltip(checkSumWarning())
+      //   address = ethJSUtil.toChecksumAddress(address)
+      // }
       props.loadAddress(loadedContractData, address)
     } catch (e) {
       console.log('Invalid Address input: ', e)
@@ -480,9 +480,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 isValidProxyAddress={props.isValidProxyAddress}
                 isValidProxyUpgrade={isValidProxyUpgrade}
                 modal={props.modal}
-                disabled={props.selectedAccount === ''}
+                disabled={props.bifStatus !== 'Connected'}
               />
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              {/* <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
                   id="deployAndRunPublishToIPFS"
                   data-id="contractDropdownIpfsCheckbox"
@@ -505,7 +505,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                     <FormattedMessage id="udapp.publishTo" /> IPFS
                   </label>
                 </CustomTooltip>
-              </div>
+              </div> */}
             </div>
           )}
         </div>

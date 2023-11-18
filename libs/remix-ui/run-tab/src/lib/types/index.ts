@@ -28,7 +28,7 @@ export interface RunTabState {
     selectedAccount: string
   },
   sendValue: string,
-  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
+  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei' | 'uxht' | 'xht';
   gasLimit: number,
   selectExEnv: string,
   personalMode: boolean,
@@ -104,6 +104,7 @@ export interface RunTabState {
   proxy: {
     deployments: { address: string, date: string, contractName: string }[]
   }
+  bif: any;
 }
 
 export interface SettingsProps {

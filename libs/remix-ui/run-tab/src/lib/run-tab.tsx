@@ -44,7 +44,8 @@ import {
   updateSelectedContract,
   syncContracts,
   isValidProxyAddress,
-  isValidProxyUpgrade
+  isValidProxyUpgrade,
+  setBif,
 } from './actions'
 import './css/run-tab.css'
 import {PublishToStorage} from '@remix-ui/publish-to-storage'
@@ -74,14 +75,14 @@ export function RunTabUI(props: RunTabProps) {
     storage: null,
     contract: null
   })
-  runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
+  // runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = {runTab}
   const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
     initRunTab(plugin)(dispatch)
-    plugin.onInitDone()
+    // plugin.onInitDone()
   }, [plugin])
 
   useEffect(() => {
@@ -273,6 +274,8 @@ export function RunTabUI(props: RunTabProps) {
             tooltip={toast}
             signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
+            bif={runTab.bif}
+            setBif={setBif}
           />
           <ContractDropdownUI
             selectedAccount={runTab.accounts.selectedAccount}
@@ -299,8 +302,9 @@ export function RunTabUI(props: RunTabProps) {
             isValidProxyAddress={isValidProxyAddress}
             isValidProxyUpgrade={isValidProxyUpgrade}
             proxy={runTab.proxy}
+            bifStatus={runTab.bif.status}
           />
-          <RecorderUI
+          {/* <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
@@ -309,7 +313,7 @@ export function RunTabUI(props: RunTabProps) {
             scenarioPrompt={scenarioPrompt}
             count={runTab.recorder.transactionCount}
             currentFile={currentfile}
-          />
+          /> */}
           <InstanceContainerUI
             instances={runTab.instances}
             clearInstances={removeInstances}

@@ -14,48 +14,48 @@ import { shortenAddress } from "@remix-ui/helper"
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
-    plugin.emit('newTransaction', tx, receipt)
-  })
+  // plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
+  //   plugin.emit('newTransaction', tx, receipt)
+  // })
 
-  plugin.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-    if (!lookupOnly) dispatch(setSendValue('0'))
-    if (error) return
-    updateAccountBalances(plugin, dispatch)
-    updateInstanceBalance(plugin, dispatch)
-  })
+  // plugin.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
+  //   if (!lookupOnly) dispatch(setSendValue('0'))
+  //   if (error) return
+  //   updateAccountBalances(plugin, dispatch)
+  //   updateInstanceBalance(plugin, dispatch)
+  // })
 
-  plugin.blockchain.event.register('contextChanged', async (context) => {
-    dispatch(resetProxyDeployments())
-    if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
-    if (context !== 'walletconnect') {
-      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
-    }
-    setFinalContext(plugin, dispatch)
-    fillAccountsList(plugin, dispatch)
-    updateAccountBalances(plugin, dispatch)
-  })
+  // plugin.blockchain.event.register('contextChanged', async (context) => {
+  //   dispatch(resetProxyDeployments())
+  //   if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
+  //   if (context !== 'walletconnect') {
+  //     (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
+  //   }
+  //   setFinalContext(plugin, dispatch)
+  //   fillAccountsList(plugin, dispatch)
+  //   updateAccountBalances(plugin, dispatch)
+  // })
 
-  plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
-    if (error) {
-      const netUI = 'can\'t detect network'
-      setNetworkNameFromProvider(dispatch, netUI)
+  // plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
+  //   if (error) {
+  //     const netUI = 'can\'t detect network'
+  //     setNetworkNameFromProvider(dispatch, netUI)
 
-      return
-    }
-    const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
+  //     return
+  //   }
+  //   const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
+  //   const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
-    setNetworkNameFromProvider(dispatch, netUI)
-  })
+  //   setNetworkNameFromProvider(dispatch, netUI)
+  // })
 
-  plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
+  // plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
 
-  plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
+  // plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
 
-  plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
+  // plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
-  plugin.on('iframe-solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
+  plugin.on('bif-solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
 
   plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('vyper', plugin, dispatch, file, source, languageVersion, data))
 
@@ -86,7 +86,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.on('filePanel', 'setWorkspace', () => {
     dispatch(resetUdapp())
-    resetAndInit(plugin)
+    // resetAndInit(plugin)
     plugin.call('manager', 'isActive', 'remixd').then((activated) => {
       dispatch(setRemixDActivated(activated))
     })
@@ -150,10 +150,10 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 
-  setInterval(() => {
-    fillAccountsList(plugin, dispatch)
-    updateInstanceBalance(plugin, dispatch)
-  }, 30000)
+  // setInterval(() => {
+  //   fillAccountsList(plugin, dispatch)
+  //   updateInstanceBalance(plugin, dispatch)
+  // }, 30000)
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {

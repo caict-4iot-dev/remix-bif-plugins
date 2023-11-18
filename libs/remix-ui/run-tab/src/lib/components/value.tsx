@@ -76,7 +76,7 @@ export function ValueUI(props: ValueProps) {
             props.setUnit(e.target.value as 'ether' | 'finney' | 'gwei' | 'wei')
           }}
         >
-          <option data-unit="wei" value="wei">
+          {/* <option data-unit="wei" value="wei">
             Wei
           </option>
           <option data-unit="gwei" value="gwei">
@@ -87,6 +87,12 @@ export function ValueUI(props: ValueProps) {
           </option>
           <option data-unit="ether" value="ether">
             Ether
+          </option> */}
+          <option data-unit="uxht" value="uxht">
+            星火萤
+          </option>
+          <option data-unit="xht" value="xht">
+            星火令
           </option>
         </select>
       </div>
