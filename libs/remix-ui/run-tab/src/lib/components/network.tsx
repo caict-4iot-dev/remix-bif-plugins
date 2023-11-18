@@ -38,7 +38,7 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
     setPrivateKey(bif.privateKey)
     setStatus(bif.status)
     setBalance(bif.balance)
-  }, [])
+  }, [bif])
 
   const onEdit = () => {
     setEditing(true)

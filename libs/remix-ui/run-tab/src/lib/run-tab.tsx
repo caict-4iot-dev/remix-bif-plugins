@@ -53,6 +53,7 @@ import {PassphrasePrompt} from './components/passphrase'
 import {MainnetPrompt} from './components/mainnet'
 import {ScenarioPrompt} from './components/scenario'
 import {setIpfsCheckedState, setRemixDActivated} from './actions/payload'
+import {getAccountBalance} from './bif/bif-service'
 
 export function RunTabUI(props: RunTabProps) {
   const {plugin} = props
@@ -82,6 +83,14 @@ export function RunTabUI(props: RunTabProps) {
 
   useEffect(() => {
     initRunTab(plugin)(dispatch)
+    plugin.on('bif-udapp', 'newTransaction', async () => {
+      const balance = await getAccountBalance()
+      setBif({...runTab.bif, balance})
+    })
+    plugin.on('bif-udapp-js', 'newTransaction', async () => {
+      const balance = await getAccountBalance()
+      setBif({...runTab.bif, balance})
+    })
     // plugin.onInitDone()
   }, [plugin])
 

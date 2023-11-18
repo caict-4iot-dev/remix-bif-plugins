@@ -157,6 +157,7 @@ export const createInstance = async (
 
       return terminalLogger(plugin, log)
     }
+    plugin.emit('newTransaction')
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
     const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
@@ -281,7 +282,7 @@ export const runTransactions = async (
   // const compilerContracts = (plugin.compilersArtefacts.get(address) || plugin.compilersArtefacts.getLastCompilationResult()).getContracts();
   // const currentFile = await plugin.call('')
   // const compilerContracts = (await plugin.compilersArtefacts.getCompilerAbstract(plugin.REACT_API.contracts.currentFile)).getContracts()
-  bif.runOrCallContractMethod(
+  await bif.runOrCallContractMethod(
     contractName,
     contractABI,
     funcABI,
@@ -312,6 +313,7 @@ export const runTransactions = async (
     },
     // compilerContracts,
   );
+  plugin.emit('newTransaction')
 }
 
 export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {

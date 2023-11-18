@@ -133,3 +133,16 @@ export const contractQuery = async (funABI: any, value: any, address: any, dataH
   console.log('contractQuery() : ', JSON.stringify(data));
   return { code: 'SUCCESS', detail: { sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress, queryResult: data.query_rets[0].result.data } };
 };
+
+export const getAccountBalance = async () => {
+  const {nodeUrl, privateKey} = JSON.parse(localStorage.getItem('bif') || '{}')
+  const sdk = new BIFCoreSDK({
+    host: nodeUrl,
+  })
+  const resp = await sdk.account.getAccountBalance({address: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress})
+  if (resp.errorCode != 0) {
+    return 0
+  }
+
+  return resp.result.balance
+}
