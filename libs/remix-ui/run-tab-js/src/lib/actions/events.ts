@@ -55,32 +55,32 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   // plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
-  plugin.on('bif-solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
+  // plugin.on('bif-solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
 
-  plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('vyper', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('vyper', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('lexon', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('lexon', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('yulp', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('yulp', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('nahmii', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('nahmii', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('hardhat', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('hardhat', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('hardhat', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('hardhat', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('foundry', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('foundry', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('foundry', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('foundry', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
+  // plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('bif-udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
+  plugin.on('bif-udapp-js', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(plugin, dispatch, env)
   })
 
-  plugin.on('bif-udapp', 'clearAllInstancesReducer', () => {
+  plugin.on('bif-udapp-js', 'clearAllInstancesReducer', () => {
     dispatch(clearAllInstances())
   })
 
-  plugin.on('bif-udapp', 'addInstanceReducer', (address, abi, name) => {
+  plugin.on('bif-udapp-js', 'addInstanceReducer', (address, abi, name) => {
     addInstance(dispatch, { abi, address, name })
   })
 
@@ -104,9 +104,26 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
   })
 
-  plugin.on('fileManager', 'currentFileChanged', (currentFile: string) => {
+  plugin.on('fileManager', 'currentFileChanged', async (currentFile: string) => {
     if (/.(.abi)$/.exec(currentFile)) {
       dispatch(setLoadType('abi'))
+    } else if (/.(.jsi)$/.exec(currentFile)) {
+      dispatch(setLoadType('jsi'));
+      const currentContent = JSON.parse(await plugin.call('fileManager', 'readFile', currentFile));
+      const sourceCode = await plugin.call('fileManager', 'readFile', currentContent.file);
+      dispatch(
+        fetchContractListSuccess({
+          [currentFile]: [
+            {
+              name: 'jsjson',
+              alias: currentContent.name,
+              file: currentFile,
+              compiler: { abi: currentContent.abi, deployedBytecode: sourceCode },
+              compilerName: 'xinghuo',
+            },
+          ],
+        }),
+      );
     } else if (/.(.sol)$/.exec(currentFile) ||
         /.(.vy)$/.exec(currentFile) || // vyper
         /.(.lex)$/.exec(currentFile) || // lexon
@@ -157,7 +174,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
-  _paq.push(['trackEvent', 'bif-udapp', 'broadcastCompilationResult', compilerName])
+  _paq.push(['trackEvent', 'bif-udapp-js', 'broadcastCompilationResult', compilerName])
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
   plugin.compilersArtefacts[languageVersion] = compiler

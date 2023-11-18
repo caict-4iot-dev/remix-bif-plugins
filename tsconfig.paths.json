@@ -91,6 +91,9 @@
             "@remix-ui/run-tab": [
                 "libs/remix-ui/run-tab/src/index.ts"
             ],
+            "@remix-ui/run-tab-js": [
+                "libs/remix-ui/run-tab-js/src/index.ts"
+            ],
             "@remix-ui/search": [
                 "libs/remix-ui/search/src/index.ts"
             ],
