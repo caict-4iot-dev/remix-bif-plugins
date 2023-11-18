@@ -92,7 +92,7 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
       <div style={txMetaRowStyle}>
         <div style={labelStyle}>私钥</div>
         <InputTooltip enabled={editing} text="星火链网私钥，比如：priSPKqSR8vTVJ1y8Wu1skBNWMHPeu8nkaerZNKEzkRq3KJix4">
-          <textarea className="form-control" id="private-key" disabled={!editing} value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />
+          <input type='password' className="form-control" id="private-key" disabled={!editing} value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />
         </InputTooltip>
       </div>
       <div style={txMetaRowStyle}>
@@ -138,7 +138,7 @@ export const iconStyle: any = {
 }
 
 export const txMetaRowStyle: any = {
-  paddingTop: 4,
+  paddingTop: 10,
   width: '100%',
 }
 
