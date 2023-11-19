@@ -84,7 +84,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     config.devServer.port = 3002;
     config.devServer.proxy = {
       '/api': {
-        target: 'http://bif.remix-project.cn',
+        target: 'https://bif-udapp.remix-project.cn',
         changeOrigin: true,
       },
     }

@@ -90,10 +90,10 @@ type AddProvider = {
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
   switch (action.type) {
   case SET_BIF: {
-    localStorage.setItem('bif', JSON.stringify(action.payload));
+    localStorage.setItem('bif', JSON.stringify({...state.bif, ...action.payload}));
     return {
       ...state,
-      bif: action.payload,
+      bif: {...state.bif, ...action.payload},
     };
   }
   
