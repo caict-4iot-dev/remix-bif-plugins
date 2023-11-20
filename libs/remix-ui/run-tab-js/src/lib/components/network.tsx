@@ -27,14 +27,14 @@ export const InputTooltip = ({text, enabled = true, children}: any) => {
 export function NetworkUI(props: {bif: any; setBif: any}) {
   const [editing, setEditing] = useState(false)
   const [status, setStatus] = useState('Disconnected')
-  const [nodeUrl, setNodeUrl] = useState('')
+  const [nodeUrl, setNodeUrl] = useState('http://test.bifcore.bitfactory.cn')
   const [privateKey, setPrivateKey] = useState('')
   const [balance, setBalance] = useState(0)
 
   const {bif, setBif} = props
 
   useEffect(() => {
-    setNodeUrl(bif.nodeUrl)
+    setNodeUrl(bif.nodeUrl || 'http://test.bifcore.bitfactory.cn')
     setPrivateKey(bif.privateKey)
     setStatus(bif.status)
     setBalance(bif.balance)
