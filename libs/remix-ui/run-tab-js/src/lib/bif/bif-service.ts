@@ -23,9 +23,10 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
     ceilLedgerSeq: '',
     initInput: JSON.stringify(params),
   }
-  console.log(createContractOperation)
   const resp = await sdk.contract.createContract(createContractOperation)
-  console.log('createContract() : ', JSON.stringify(resp))
+  if (resp.errorCode !== 0) {
+    return {code: 'ERROR', message: JSON.stringify(resp)}
+  }
   const txHash = resp.result.hash
   const transaction: any = await new Promise((resolve, reject) => {
     let count = 0
@@ -52,11 +53,11 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
       },
     }
   } else {
-    return {code: 'ERROR', message: '合约部署失败'}
+    return {code: 'ERROR', message: JSON.stringify(transaction)}
   }
 }
 
-export const contractInvoke = async (funABI: any, value: any, address: any) => {
+export const contractInvoke = async (funABI: any, value: any, address: any, {gasLimit, sendValue, sendUnit}) => {
   const {nodeUrl, privateKey} = JSON.parse(localStorage.getItem('bif') || '{}')
   const sdk = new BIFCoreSDK({
     host: nodeUrl,
@@ -72,14 +73,16 @@ export const contractInvoke = async (funABI: any, value: any, address: any) => {
     privateKey: privateKey,
     contractAddress: address,
     ceilLedgerSeq: '',
-    feeLimit: '1002088010',
+    feeLimit: gasLimit.toString(),
     gasPrice: '1',
     remarks: 'contractInvoke',
     amount: '0',
     input: JSON.stringify({method: funABI.name, params}),
   }
   const resp = await sdk.contract.contractInvoke(contractInvokeOperation)
-  console.log('contractInvoke() : ', JSON.stringify(resp))
+  if (resp.errorCode !== 0) {
+    return {code: 'ERROR', message: JSON.stringify(resp)}
+  }
   const txHash = resp.result.hash
   const transaction: any = await new Promise((resolve, reject) => {
     let count = 0
@@ -98,7 +101,7 @@ export const contractInvoke = async (funABI: any, value: any, address: any) => {
   if (transaction.errorCode === 0) {
     return {code: 'SUCCESS', detail: {...transaction.result, logs: transaction.result.logs.map((log) => ({...log, address}))}}
   } else {
-    return {code: 'ERROR', message: '合约部署失败'}
+    return {code: 'ERROR', message: JSON.stringify(transaction)}
   }
 }
 
@@ -140,20 +143,28 @@ export const contractQuery = async (funABI: any, value: any, address: any) => {
     feeLimit: '',
     gasPrice: '',
   }
-  const data = await sdk.contract.contractQuery(contractQueryOperation)
-  console.log('contractQuery() : ', JSON.stringify(data))
-  return {code: 'SUCCESS', detail: {sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress, queryResult: data.query_rets[0].result}}
+  const resp = await sdk.contract.contractQuery(contractQueryOperation)
+  if (!resp.query_rets || resp.query_rets.length === 0) {
+    return {code: 'ERROR', message: JSON.stringify(resp)}
+  }
+  return {code: 'SUCCESS', detail: {sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress, queryResult: resp.query_rets[0].result}}
 }
 
-export const getAccountBalance = async () => {
-  const {nodeUrl, privateKey} = JSON.parse(localStorage.getItem('bif') || '{}')
+export const getAccountBalance = async (nodeUrl = '', privateKey = '') => {
+  const bif = JSON.parse(localStorage.getItem('bif') || '{}')
   const sdk = new BIFCoreSDK({
-    host: nodeUrl,
+    host: nodeUrl || bif.nodeUrl,
   })
-  const resp = await sdk.account.getAccountBalance({address: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress})
-  if (resp.errorCode != 0) {
-    return 0
+  let address = ''
+  try {
+    address = sdk.keypair.privateKeyManagerByKey(privateKey || bif.privateKey).encAddress
+  } catch (error) {
+    return {code: 'ERROR', message: error.toString()}
+  }
+  const resp = await sdk.account.getAccountBalance({address})
+  if (resp.errorCode !== 0 || resp.result.balance === undefined) {
+    return {code: 'ERROR', message: JSON.stringify(resp)}
   }
 
-  return resp.result.balance
+  return {code: 'SUCCESS', detail: resp.result.balance}
 }

@@ -85,11 +85,11 @@ export function RunTabUI(props: RunTabProps) {
     initRunTab(plugin)(dispatch)
     plugin.on('bif-udapp', 'newTransaction', async () => {
       const balance = await getAccountBalance()
-      setBif({balance})
+      setBif({balance: balance.detail})
     })
     plugin.on('bif-udapp-js', 'newTransaction', async () => {
       const balance = await getAccountBalance()
-      setBif({balance})
+      setBif({balance: balance.detail})
     })
     // plugin.onInitDone()
   }, [plugin])

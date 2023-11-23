@@ -36,6 +36,9 @@ async function deployContract(selectedContract, { gasLimit, sendValue, sendUnit 
 
       statusCb(`creation of ${selectedContract.name} pending...`);
       const resp = await createContract(selectedContract, { gasLimit, sendValue, sendUnit }, args, { contractBytecode: data.contractBytecode, dataHex: data.dataHex });
+      if (resp.code !== 'SUCCESS') {
+        return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
+      }
       eventsDecoder.parseLogs({}, { logs: resp.detail.logs }, selectedContract.name, compilerContracts, (error, logs) => {
         if (error) {
           statusCb(`creation of ${selectedContract.name} errored: ${error}`);
@@ -76,6 +79,7 @@ async function deployContract(selectedContract, { gasLimit, sendValue, sendUnit 
 
 async function runOrCallContractMethod(
   contractName: any,
+  {gasLimit, sendValue, sendUnit},
   contractAbi: any,
   funABI: any,
   contract: any,
@@ -116,8 +120,11 @@ async function runOrCallContractMethod(
       }
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure';
       if (useCall) {
-        const resp = await contractQuery(funABI, value, address, data.dataHex);
-        outputCb(resp.detail.queryResult);
+        const resp: any = await contractQuery(funABI, value, address, data.dataHex);
+        if (resp.code !== 'SUCCESS') {
+          return logCallback(`${logMsg} errored: ${resp.message}`);
+        }
+        outputCb(resp.detail.queryResult.data);
         logKnownTransaction({
           type: 'knownTransaction',
           value: {
@@ -127,13 +134,16 @@ async function runOrCallContractMethod(
               to: address,
               fn: funABI.name,
               params: eventsDecoder._decodeInputParams(data.dataHex.replace('0x', '').substring(8), funABI),
-              decodedReturnValue: txFormat.decodeResponse(resp.detail.queryResult, funABI),
+              decodedReturnValue: txFormat.decodeResponse(resp.detail.queryResult.data, funABI),
             },
           },
           provider: 'bif',
         });
       } else {
-        const resp = await contractInvoke(funABI, value, address, data.dataHex);
+        const resp = await contractInvoke(funABI, value, address, data.dataHex, {gasLimit, sendValue, sendUnit});
+        if (resp.code !== 'SUCCESS') {
+          return logCallback(`${logMsg} errored: ${resp.message}`);
+        }
         eventsDecoder.parseLogs({}, { logs: resp.detail.logs }, contractName, compilerContracts, (error, logs) => {
           if (error) {
             logCallback(`${error}`);

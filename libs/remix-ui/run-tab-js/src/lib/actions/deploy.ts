@@ -284,6 +284,7 @@ export const runTransactions = async (
   // const compilerContracts = (await plugin.compilersArtefacts.getCompilerAbstract(plugin.REACT_API.contracts.currentFile)).getContracts()
   await bif.runOrCallContractMethod(
     contractName,
+    { gasLimit: plugin.REACT_API.gasLimit, sendValue: plugin.REACT_API.sendValue, sendUnit: plugin.REACT_API.sendUnit },
     contractABI,
     funcABI,
     contract,

@@ -22,6 +22,9 @@ async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit},
   const {continueCb, promptCb, statusCb, finalCb} = callbacks
   statusCb(`creation of ${selectedContract.name} pending...`)
   const resp = await createContract(selectedContract, {gasLimit, sendValue, sendUnit}, args)
+  if (resp.code !== 'SUCCESS') {
+    return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
+  }
   finalCb(null, selectedContract, resp.detail.contractAddress)
   logKnownTransaction({
     type: 'knownTransaction',
@@ -50,10 +53,18 @@ async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit},
   logViewOnExplorer('http://test-bj-explorer.bitfactory.cn', resp.detail.hash)
 }
 
-async function runOrCallContractMethod(contractName: any, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any) {
+async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, sendUnit}, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any) {
+  if (!lookupOnly) {
+    logCallback(`${logMsg} pending ... `)
+  } else {
+    logCallback(`${logMsg}`)
+  }
   const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
   if (useCall) {
-    const resp = await contractQuery(funABI, value, address)
+    const resp: any = await contractQuery(funABI, value, address)
+    if (resp.code !== 'SUCCESS') {
+      return logCallback(`${logMsg} errored: ${resp.message}`);
+    }
     outputCb(resp.detail.queryResult)
     logKnownTransaction({
       type: 'knownTransaction',
@@ -70,7 +81,10 @@ async function runOrCallContractMethod(contractName: any, contractAbi: any, funA
       provider: 'bif',
     })
   } else {
-    const resp = await contractInvoke(funABI, value, address)
+    const resp = await contractInvoke(funABI, value, address, {gasLimit, sendValue, sendUnit})
+    if (resp.code !== 'SUCCESS') {
+      return logCallback(`${logMsg} errored: ${resp.message}`);
+    }
     logKnownTransaction({
       type: 'knownTransaction',
       value: {

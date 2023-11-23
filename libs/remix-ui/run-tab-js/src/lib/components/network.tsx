@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Popover from 'react-bootstrap/Popover'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import {logHtml} from '../actions'
-import BIFCoreSDK from 'bifcore-sdk-nodejs'
+import { getAccountBalance } from '../bif/bif-service'
 
 export const InputTooltip = ({text, enabled = true, children}: any) => {
   if (!enabled) {
@@ -49,35 +49,28 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
     setPrivateKey(bif.privateKey)
   }
   const onSave = async () => {
-    await getAccountBalance()
-  }
-
-  const getAccountBalance = async () => {
     setStatus('Connecting...')
 
-    const sdk = new BIFCoreSDK({
-      host: nodeUrl,
-    })
-    const resp = await sdk.account.getAccountBalance({address: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress})
-    if (resp.errorCode != 0) {
+    const resp = await getAccountBalance(nodeUrl, privateKey)
+    if (resp.code !== 'SUCCESS') {
       setStatus('Disconnected')
-      logHtml(JSON.stringify(resp.errorDesc))
+      logHtml(resp.message)
       return
     }
 
     setStatus('Connected')
-    setBalance(resp.result.balance)
+    setBalance(resp.detail)
     setEditing(false)
     setBif({
       nodeUrl,
       privateKey,
       status: 'Connected',
-      balance: resp.result.balance,
+      balance: resp.detail,
     })
   }
 
   const onRefresh = async () => {
-    await getAccountBalance()
+    await onSave()
   }
 
   return (
@@ -91,7 +84,7 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
 
       <div style={txMetaRowStyle}>
         <div style={labelStyle}>私钥</div>
-        <InputTooltip enabled={editing} text="星火链网私钥，比如：priSPKqSR8vTVJ1y8Wu1skBNWMHPeu8nkaerZNKEzkRq3KJix4">
+        <InputTooltip enabled={editing} text="星火链网私钥">
           <input type='password' className="form-control" id="private-key" disabled={!editing} value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />
         </InputTooltip>
       </div>
