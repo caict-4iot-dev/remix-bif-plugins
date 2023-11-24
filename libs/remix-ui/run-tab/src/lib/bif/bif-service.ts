@@ -136,7 +136,7 @@ export const contractQuery = async (funABI: any, value: any, address: any, dataH
   if (!resp.query_rets || resp.query_rets.length === 0) {
     return {code: 'ERROR', message: JSON.stringify(resp)}
   }
-  return {code: 'SUCCESS', detail: {sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress, queryResult: resp.query_rets[0].result}}
+  return {code: 'SUCCESS', detail: {sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress, queryResult: resp.query_rets[0] ? resp.query_rets[0].result : { data: null }}}
 }
 
 export const getAccountBalance = async (nodeUrl = '', privateKey = '') => {

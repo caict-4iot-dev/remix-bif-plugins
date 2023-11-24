@@ -127,4 +127,12 @@ export class EventsDecoder {
     }
     return ret;
   }
+
+  _parseInputParams(decoded, abi) {
+    const ret = {};
+    for (const k in abi.inputs) {
+      ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k];
+    }
+    return ret;
+  }
 }
