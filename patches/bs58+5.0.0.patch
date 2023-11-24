@@ -1,0 +1,10 @@
+diff --git a/node_modules/bs58/index.js b/node_modules/bs58/index.js
+index 3d02b0c..731098a 100644
+--- a/node_modules/bs58/index.js
++++ b/node_modules/bs58/index.js
+@@ -1,4 +1,4 @@
+ const basex = require('base-x')
+-const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
++const ALPHABET = '123456789AbCDEFGHJKLMNPQRSTuVWXYZaBcdefghijkmnopqrstUvwxyz'
+ 
+ module.exports = basex(ALPHABET)

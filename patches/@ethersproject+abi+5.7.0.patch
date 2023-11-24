@@ -1,0 +1,70 @@
+diff --git a/node_modules/@ethersproject/abi/lib/coders/address.js b/node_modules/@ethersproject/abi/lib/coders/address.js
+index 118428a..482911e 100644
+--- a/node_modules/@ethersproject/abi/lib/coders/address.js
++++ b/node_modules/@ethersproject/abi/lib/coders/address.js
+@@ -19,6 +19,7 @@ exports.AddressCoder = void 0;
+ var address_1 = require("@ethersproject/address");
+ var bytes_1 = require("@ethersproject/bytes");
+ var abstract_coder_1 = require("./abstract-coder");
++const bs58 = require('bs58')
+ var AddressCoder = /** @class */ (function (_super) {
+     __extends(AddressCoder, _super);
+     function AddressCoder(localName) {
+@@ -29,7 +30,9 @@ var AddressCoder = /** @class */ (function (_super) {
+     };
+     AddressCoder.prototype.encode = function (writer, value) {
+         try {
+-            value = (0, address_1.getAddress)(value);
++            const bytes = bs58.decode(value.substring(10))
++            const hex = Buffer.from(bytes).toString('hex')
++            value = '0x6566' + hex;
+         }
+         catch (error) {
+             this._throwError(error.message, value);
+@@ -37,7 +40,10 @@ var AddressCoder = /** @class */ (function (_super) {
+         return writer.writeValue(value);
+     };
+     AddressCoder.prototype.decode = function (reader) {
+-        return (0, address_1.getAddress)((0, bytes_1.hexZeroPad)(reader.readValue().toHexString(), 20));
++        const hex = reader.readValue().toHexString().replace('0x6566', '');
++        const bytes = Uint8Array.from(Buffer.from(hex, 'hex'))
++        const address = bs58.encode(bytes)
++        return 'did:bid:ef' + address;
+     };
+     return AddressCoder;
+ }(abstract_coder_1.Coder));
+diff --git a/node_modules/@ethersproject/abi/src.ts/coders/address.ts b/node_modules/@ethersproject/abi/src.ts/coders/address.ts
+index 6ae2d27..0b9b5da 100644
+--- a/node_modules/@ethersproject/abi/src.ts/coders/address.ts
++++ b/node_modules/@ethersproject/abi/src.ts/coders/address.ts
+@@ -2,6 +2,7 @@
+ 
+ import { getAddress } from "@ethersproject/address";
+ import { hexZeroPad } from "@ethersproject/bytes";
++import bs58 from 'bs58';
+ 
+ import { Coder, Reader, Writer } from "./abstract-coder";
+ 
+@@ -17,7 +18,9 @@ export class AddressCoder extends Coder {
+ 
+     encode(writer: Writer, value: string): number {
+         try {
+-            value = getAddress(value)
++            const bytes = bs58.decode(value.substring(10))
++            const hex = Buffer.from(bytes).toString('hex')
++            value = '0x6566' + hex
+         } catch (error) {
+             this._throwError(error.message, value);
+         }
+@@ -25,7 +28,10 @@ export class AddressCoder extends Coder {
+     }
+ 
+     decode(reader: Reader): any {
+-        return getAddress(hexZeroPad(reader.readValue().toHexString(), 20));
++        const hex = reader.readValue().toHexString().replace('0x6566', '');
++        const bytes = Uint8Array.from(Buffer.from(hex, 'hex'))
++        const address = bs58.encode(bytes)
++        return 'did:bid:ef' + address;
+     }
+ }
+ 

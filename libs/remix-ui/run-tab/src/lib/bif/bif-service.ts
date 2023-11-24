@@ -114,7 +114,7 @@ export const getTransactionInfo = async (txHash) => {
     }
     logs.forEach((log) => {
       log.data = '0x' + log.data;
-      log.topics[0] = '0x' + log.topics[0];
+      log.topics = log.topics.map((topic) => '0x' + topic);
     });
   }
   return { errorCode: 0, result: { ...transaction, logs } };
