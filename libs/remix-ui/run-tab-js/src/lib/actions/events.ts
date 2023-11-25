@@ -118,7 +118,52 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
               name: 'jsjson',
               alias: currentContent.name,
               file: currentFile,
-              compiler: { abi: currentContent.abi, deployedBytecode: sourceCode },
+              compiler: { 
+                defaultAbi: true,
+                abi: currentContent.abi || [
+                  {
+                    "constant": false,
+                    "inputs": [
+                      {
+                        "name": "input",
+                        "type": "json"
+                      }
+                    ],
+                    "name": "main",
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "defaultAbi": true,
+                    "type": "function"
+                  },
+                  {
+                    "constant": true,
+                    "inputs": [
+                      {
+                        "name": "input",
+                        "type": "json"
+                      }
+                    ],
+                    "name": "query",
+                    "payable": false,
+                    "stateMutability": "view",
+                    "defaultAbi": true,
+                    "type": "function"
+                  },
+                  {
+                    "inputs": [
+                      {
+                        "name": "input",
+                        "type": "json"
+                      }
+                    ],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "defaultAbi": true,
+                    "type": "constructor"
+                  }
+                ], 
+                deployedBytecode: sourceCode 
+              },
               compilerName: 'xinghuo',
             },
           ],

@@ -26,7 +26,7 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
     feeLimit: gasLimit.toString(),
     gasPrice: '1',
     ceilLedgerSeq: '',
-    initInput: JSON.stringify(params),
+    initInput: JSON.stringify(selectedContract.compiler.defaultAbi ? params['input'] : params),
   }
   const resp = await sdk.contract.createContract(createContractOperation)
   if (resp.errorCode !== 0) {
@@ -87,7 +87,7 @@ export const contractInvoke = async (funABI: any, funArgs: any, address: any, {g
     gasPrice: '1',
     remarks: 'contractInvoke',
     amount: '0',
-    input: JSON.stringify({method: funABI.name, params}),
+    input: JSON.stringify(funABI.defaultAbi ? params['input'] : {method: funABI.name, params}),
   }
   const resp = await sdk.contract.contractInvoke(contractInvokeOperation)
   if (resp.errorCode !== 0) {
@@ -154,7 +154,7 @@ export const contractQuery = async (funABI: any, funArgs: any, address: any) => 
   const contractQueryOperation = {
     sourceAddress: '',
     contractAddress: address,
-    input: JSON.stringify({method: funABI.name, params}),
+    input: JSON.stringify(funABI.defaultAbi ? params['input'] : {method: funABI.name, params}),
     feeLimit: '',
     gasPrice: '',
   }
