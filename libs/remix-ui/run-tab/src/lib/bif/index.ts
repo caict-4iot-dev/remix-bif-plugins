@@ -129,7 +129,7 @@ async function runOrCallContractMethod(
         logKnownTransaction({
           type: 'knownTransaction',
           value: {
-            tx: { isCall: true, input: value, to: address, from: resp.detail.sourceAddress, contractAddress: address },
+            tx: { isCall: true, input: value, to: address, from: resp.detail.sourceAddress, contractAddress: address, hash: `${address}${funABI.name}${Date.now()}` },
             resolvedData: {
               contractName: contractName,
               to: address,
@@ -162,7 +162,7 @@ async function runOrCallContractMethod(
                 to: address,
                 transactionIndex: resp.detail.transaction.nonce,
               },
-              receipt: { status: '0x1', contractAddress: address },
+              receipt: { status: resp.detail.error_code === 0 ? '0x1' : '0x0', contractAddress: address },
               resolvedData: {
                 contractName: contractName,
                 to: address,

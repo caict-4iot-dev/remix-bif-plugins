@@ -21,7 +21,8 @@ function getinputParameters(value) {
 async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit}, args, contractMetadata, callbacks, confirmationCb) {
   const {continueCb, promptCb, statusCb, finalCb} = callbacks
   statusCb(`creation of ${selectedContract.name} pending...`)
-  const resp = await createContract(selectedContract, {gasLimit, sendValue, sendUnit}, args)
+  const funArgs = txFormat.parseFunctionParams(args)
+  const resp = await createContract(selectedContract, {gasLimit, sendValue, sendUnit}, funArgs)
   if (resp.code !== 'SUCCESS') {
     return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
   }
@@ -43,7 +44,7 @@ async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit},
         contractName: selectedContract.name,
         to: null,
         fn: '(constructor)',
-        params: args,
+        params: eventsDecoder._parseInputParams(funArgs, selectedContract.getConstructorInterface()),
         contractAddress: resp.detail.contractAddress,
       },
       logs: {decoded: resp.detail.logs, raw: resp.detail.logs},
@@ -60,30 +61,37 @@ async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, 
     logCallback(`${logMsg}`)
   }
   const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
+  const funArgs = txFormat.parseFunctionParams(value)
   if (useCall) {
-    const resp: any = await contractQuery(funABI, value, address)
+    const resp: any = await contractQuery(funABI, funArgs, address)
     if (resp.code !== 'SUCCESS') {
       return logCallback(`${logMsg} errored: ${resp.message}`);
     }
-    outputCb(resp.detail.queryResult)
+    if (resp.detail.queryResult.error) {
+      logCallback(`${logMsg} errored: ${JSON.stringify(resp.detail.queryResult.error)}`);
+    }
+    outputCb(resp.detail.queryResult.result)
     logKnownTransaction({
       type: 'knownTransaction',
       value: {
-        tx: {isCall: true, input: value, to: address, from: resp.detail.sourceAddress, contractAddress: address},
+        tx: { isCall: true, input: value, to: address, from: resp.detail.sourceAddress, contractAddress: address, hash: `${address}${funABI.name}${Date.now()}` },
         resolvedData: {
           contractName: contractName,
           to: address,
           fn: funABI.name,
-          params: value,
-          decodedReturnValue: resp.detail.queryResult,
+          params: eventsDecoder._parseInputParams(funArgs, funABI),
+          decodedReturnValue: resp.detail.queryResult.result,
         },
       },
       provider: 'bif',
     })
   } else {
-    const resp = await contractInvoke(funABI, value, address, {gasLimit, sendValue, sendUnit})
+    const resp = await contractInvoke(funABI, funArgs, address, {gasLimit, sendValue, sendUnit})
     if (resp.code !== 'SUCCESS') {
       return logCallback(`${logMsg} errored: ${resp.message}`);
+    }
+    if (resp.detail.error_code !== 0) {
+      logCallback(`${logMsg} errored: ${resp.detail.error_desc}`);
     }
     logKnownTransaction({
       type: 'knownTransaction',
@@ -97,12 +105,12 @@ async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, 
           to: address,
           transactionIndex: resp.detail.transaction.nonce,
         },
-        receipt: {status: '0x1', contractAddress: address},
+        receipt: {status: resp.detail.error_code === 0 ? '0x1' : '0x0', contractAddress: address},
         resolvedData: {
           contractName: contractName,
           to: address,
           fn: funABI.name,
-          params: value,
+          params: eventsDecoder._parseInputParams(funArgs, funABI),
         },
         logs: {decoded: resp.detail.logs, raw: resp.detail.logs},
       },
