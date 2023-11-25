@@ -1,11 +1,102 @@
 'use strict';
 import { ethers } from 'ethers';
+import fromExponential from 'from-exponential';
 import { toBuffer, addHexPrefix } from '@ethereumjs/util';
 import { execution } from '@remix-project/remix-lib';
 
 const {
   txHelper: { visitContracts, makeFullTypeDefinition },
 } = execution;
+
+function parseFunctionParams (params) {
+  const args = []
+  // Check if parameter string starts with array or string
+  let startIndex = isArrayOrStringStart(params, 0) ? -1 : 0
+  for (let i = 0; i < params.length; i++) {
+    // If a quote is received
+    if (params.charAt(i) === '"') {
+      startIndex = -1
+      let endQuoteIndex = false
+      // look for closing quote. On success, push the complete string in arguments list
+      for (let j = i + 1; !endQuoteIndex; j++) {
+        if (params.charAt(j) === '"') {
+          args.push(normalizeParam(params.substring(i + 1, j)))
+          endQuoteIndex = true
+          i = j
+        }
+        // Throw error if end of params string is arrived but couldn't get end quote
+        if (!endQuoteIndex && j === params.length - 1) {
+          throw new Error('invalid params')
+        }
+      }
+    } else if (params.charAt(i) === '[') { // If an array/struct opening bracket is received
+      startIndex = -1
+      let bracketCount = 1
+      let j
+      for (j = i + 1; bracketCount !== 0; j++) {
+        // Increase count if another array opening bracket is received (To handle nested array)
+        if (params.charAt(j) === '[') {
+          bracketCount++
+        } else if (params.charAt(j) === ']') { // // Decrease count if an array closing bracket is received (To handle nested array)
+          bracketCount--
+        }
+        // Throw error if end of params string is arrived but couldn't get end of tuple
+        if (bracketCount !== 0 && j === params.length - 1) {
+          throw new Error('invalid tuple params')
+        }
+        if (bracketCount === 0) break
+      }
+      args.push(parseFunctionParams(params.substring(i + 1, j)))
+      i = j - 1
+    } else if (params.charAt(i) === ',' || i === params.length - 1) { // , or end of string
+      // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
+      if (startIndex >= 0) {
+        let param = params.substring(startIndex, i === params.length - 1 ? undefined : i)
+        param = normalizeParam(param)
+        args.push(param)
+      }
+      // Register start index of a parameter to parse
+      startIndex = isArrayOrStringStart(params, i + 1) ? -1 : i + 1
+    }
+  }
+  return args
+}
+
+const normalizeParam = (param) => {
+  param = param.trim()
+  if (param.startsWith('0x')) param = `${param}`
+  if (/[0-9]/g.test(param)) param = `${param}`
+
+  // fromExponential
+  if (!param.startsWith('0x')) {
+    const regSci = REGEX_SCIENTIFIC.exec(param)
+    const exponents = regSci ? regSci[2] : null
+    if (regSci && REGEX_DECIMAL.exec(exponents)) {
+      try {
+        let paramTrimmed = param.replace(/^'/g, '').replace(/'$/g, '')
+        paramTrimmed = paramTrimmed.replace(/^"/g, '').replace(/"$/g, '')
+        param = fromExponential(paramTrimmed)     
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }  
+
+  if (typeof param === 'string') {          
+    if (param === 'true') param = true
+    if (param === 'false') param = false
+    if (!isNaN(parseFloat(param)) && isFinite(param)) param = Number(param)        
+  }
+  return param
+}
+
+const REGEX_SCIENTIFIC = /^-?(\d+\.?\d*)e\d*(\d+)$/
+
+const REGEX_DECIMAL = /^\d*/
+
+function isArrayOrStringStart (str, index) {
+  return str.charAt(index) === '"' || str.charAt(index) === '['
+}
 
 /**
  * Register to txListener and extract events
@@ -134,5 +225,9 @@ export class EventsDecoder {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k];
     }
     return ret;
+  }
+
+  _parseFunctionParams(params) {
+    return parseFunctionParams(params)
   }
 }

@@ -8,7 +8,13 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
   })
   const params = {}
   constructor.inputs.forEach((input, index) => {
-    params[input.name] = funArgs[index]
+    if (input.type.indexOf('json') === 0) {
+      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
+    } else if (input.type === 'string') {
+      params[input.name] = String(funArgs[index])
+    } else {
+      params[input.name] = funArgs[index]
+    }
   })
   const createContractOperation = {
     sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress,
@@ -64,7 +70,13 @@ export const contractInvoke = async (funABI: any, funArgs: any, address: any, {g
   const sourceAddress = sdk.keypair.privateKeyManagerByKey(privateKey).encAddress
   const params = {}
   funABI.inputs.forEach((input, index) => {
-    params[input.name] = funArgs[index]
+    if (input.type.indexOf('json') === 0) {
+      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
+    } else if (input.type === 'string') {
+      params[input.name] = String(funArgs[index])
+    } else {
+      params[input.name] = funArgs[index]
+    }
   })
   const contractInvokeOperation = {
     sourceAddress: sourceAddress,
@@ -131,7 +143,13 @@ export const contractQuery = async (funABI: any, funArgs: any, address: any) => 
   })
   const params = {}
   funABI.inputs.forEach((input, index) => {
-    params[input.name] = funArgs[index]
+    if (input.type.indexOf('json') === 0) {
+      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
+    } else if (input.type === 'string') {
+      params[input.name] = String(funArgs[index])
+    } else {
+      params[input.name] = funArgs[index]
+    }
   })
   const contractQueryOperation = {
     sourceAddress: '',

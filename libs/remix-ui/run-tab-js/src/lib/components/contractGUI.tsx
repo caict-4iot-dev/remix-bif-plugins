@@ -3,12 +3,12 @@ import React, {useEffect, useRef, useState} from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import {ContractGUIProps} from '../types'
-import {CopyToClipboard} from '@remix-ui/clipboard'
 import {CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg} from '@remix-ui/helper'
 import {Dropdown} from 'react-bootstrap'
+import { EventsDecoder } from '../bif/eventsDecoder'
 
-const txFormat = remixLib.execution.txFormat
-const txHelper = remixLib.execution.txHelper
+const eventsDecoder = new EventsDecoder()
+
 export function ContractGUI(props: ContractGUIProps) {
   const [title, setTitle] = useState<string>('')
   const [basicInput, setBasicInput] = useState<string>('')
@@ -83,38 +83,6 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }, [props.lookupOnly, props.funcABI, title])
 
-  const getEncodedCall = () => {
-    const multiString = getMultiValsString(multiFields.current)
-    // copy-to-clipboard icon is only visible for method requiring input params
-    if (!multiString) {
-      return intl.formatMessage({id: 'udapp.getEncodedCallError'})
-    }
-    const multiJSON = JSON.parse('[' + multiString + ']')
-
-    const encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.funcABI.type === 'constructor' ? props.evmBC : null)
-
-    if (encodeObj.error) {
-      console.error(encodeObj.error)
-      return encodeObj.error
-    } else {
-      return encodeObj.data
-    }
-  }
-
-  const getEncodedParams = () => {
-    try {
-      const multiString = getMultiValsString(multiFields.current)
-      // copy-to-clipboard icon is only visible for method requiring input params
-      if (!multiString) {
-        return intl.formatMessage({id: 'udapp.getEncodedCallError'})
-      }
-      const multiJSON = JSON.parse('[' + multiString + ']')
-      return txHelper.encodeParams(props.funcABI, multiJSON)
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
   const switchMethodViewOn = () => {
     setToggleContainer(true)
     makeMultiVal()
@@ -161,7 +129,7 @@ export function ContractGUI(props: ContractGUIProps) {
     const inputString = basicInput
 
     if (inputString) {
-      const inputJSON = remixLib.execution.txFormat.parseFunctionParams(inputString)
+      const inputJSON = eventsDecoder._parseFunctionParams(inputString)
       const multiInputs = multiFields.current
 
       for (let k = 0; k < multiInputs.length; k++) {
@@ -355,20 +323,6 @@ export function ContractGUI(props: ContractGUIProps) {
             })}
           </div>
           <div className="d-flex udapp_group udapp_multiArg">
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copyCalldata'})} icon="fa-clipboard" direction={'bottom'} getContent={getEncodedCall}>
-              <button className="btn remixui_copyButton">
-                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                <label htmlFor="copyCalldata">Calldata</label>
-              </button>
-            </CopyToClipboard>
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copyParameters'})} icon="fa-clipboard" direction={'bottom'} getContent={getEncodedParams}>
-              <button className="btn remixui_copyButton">
-                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
-                <label htmlFor="copyParameters">
-                  <FormattedMessage id="udapp.parameters" />
-                </label>
-              </button>
-            </CopyToClipboard>
             <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="remixUdappInstanceButtonTooltip" tooltipText={buttonOptions.title}>
               <div onClick={handleExpandMultiClick}>
                 <button

@@ -21,7 +21,7 @@ function getinputParameters(value) {
 async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit}, args, contractMetadata, callbacks, confirmationCb) {
   const {continueCb, promptCb, statusCb, finalCb} = callbacks
   statusCb(`creation of ${selectedContract.name} pending...`)
-  const funArgs = txFormat.parseFunctionParams(args)
+  const funArgs = eventsDecoder._parseFunctionParams(args)
   const resp = await createContract(selectedContract, {gasLimit, sendValue, sendUnit}, funArgs)
   if (resp.code !== 'SUCCESS') {
     return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
@@ -61,7 +61,7 @@ async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, 
     logCallback(`${logMsg}`)
   }
   const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
-  const funArgs = txFormat.parseFunctionParams(value)
+  const funArgs = eventsDecoder._parseFunctionParams(value)
   if (useCall) {
     const resp: any = await contractQuery(funABI, funArgs, address)
     if (resp.code !== 'SUCCESS') {
