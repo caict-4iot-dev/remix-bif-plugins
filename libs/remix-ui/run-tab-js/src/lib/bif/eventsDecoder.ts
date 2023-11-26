@@ -85,7 +85,7 @@ const normalizeParam = (param) => {
   if (typeof param === 'string') {          
     if (param === 'true') param = true
     if (param === 'false') param = false
-    if (!isNaN(parseFloat(param)) && isFinite(param)) param = Number(param)        
+    // if (!isNaN(parseFloat(param)) && isFinite(param)) param = Number(param)        
   }
   return param
 }

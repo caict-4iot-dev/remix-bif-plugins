@@ -1,21 +1,28 @@
 import BIFCoreSDK from 'bifcore-sdk-nodejs'
 
+const parseParams = (abiInputs, funArgs) => {
+  const params = {}
+  abiInputs.forEach((input, index) => {
+    if (input.type.indexOf('json') === 0) {
+      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
+    } else if (input.type === 'number') {
+      params[input.name] = Number(funArgs[index])
+    } else if (input.type === 'number[]') {
+      params[input.name] = funArgs[index].map(item => Number(item))
+    } else {
+      params[input.name] = funArgs[index]
+    }
+  })
+  return params
+}
+
 export const createContract = async (selectedContract, {gasLimit, sendValue, sendUnit}, funArgs): Promise<any> => {
   const {nodeUrl, privateKey} = JSON.parse(localStorage.getItem('bif') || '{}')
   const constructor = selectedContract.getConstructorInterface()
   const sdk = new BIFCoreSDK({
     host: nodeUrl,
   })
-  const params = {}
-  constructor.inputs.forEach((input, index) => {
-    if (input.type.indexOf('json') === 0) {
-      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
-    } else if (input.type === 'string') {
-      params[input.name] = String(funArgs[index])
-    } else {
-      params[input.name] = funArgs[index]
-    }
-  })
+  const params = parseParams(constructor.inputs, funArgs)
   const createContractOperation = {
     sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress,
     privateKey: privateKey,
@@ -68,16 +75,7 @@ export const contractInvoke = async (funABI: any, funArgs: any, address: any, {g
     host: nodeUrl,
   })
   const sourceAddress = sdk.keypair.privateKeyManagerByKey(privateKey).encAddress
-  const params = {}
-  funABI.inputs.forEach((input, index) => {
-    if (input.type.indexOf('json') === 0) {
-      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
-    } else if (input.type === 'string') {
-      params[input.name] = String(funArgs[index])
-    } else {
-      params[input.name] = funArgs[index]
-    }
-  })
+  const params = parseParams(funABI.inputs, funArgs)
   const contractInvokeOperation = {
     sourceAddress: sourceAddress,
     privateKey: privateKey,
@@ -141,16 +139,7 @@ export const contractQuery = async (funABI: any, funArgs: any, address: any) => 
   const sdk = new BIFCoreSDK({
     host: nodeUrl,
   })
-  const params = {}
-  funABI.inputs.forEach((input, index) => {
-    if (input.type.indexOf('json') === 0) {
-      params[input.name] = JSON.parse(funArgs[index].replaceAll("'", '"'))
-    } else if (input.type === 'string') {
-      params[input.name] = String(funArgs[index])
-    } else {
-      params[input.name] = funArgs[index]
-    }
-  })
+  const params = parseParams(funABI.inputs, funArgs)
   const contractQueryOperation = {
     sourceAddress: '',
     contractAddress: address,
