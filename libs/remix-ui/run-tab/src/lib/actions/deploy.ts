@@ -23,11 +23,11 @@ const txHelper = remixLib.execution.txHelper
 const txFormat = remixLib.execution.txFormat
 
 const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
-  if (/.(.abi)$/.exec(plugin.config.get('currentFile'))) {
-    confirmCb(() => {
+  if (/.(.abi)$/.exec(plugin.REACT_API.contracts.currentFile)) {
+    confirmCb(async () => {
       let abi
       try {
-        abi = JSON.parse(plugin.editor.currentContent())
+        abi = JSON.parse(await plugin.call('fileManager', 'readFile', plugin.REACT_API.contracts.currentFile))
       } catch (e) {
         return cb('Failed to parse the current file as JSON ABI.')
       }
@@ -288,7 +288,18 @@ export const runTransactions = async (
   const params = funcABI.type !== 'fallback' ? inputsValues : ''
   // const compilerContracts = (plugin.compilersArtefacts.get(address) || plugin.compilersArtefacts.getLastCompilationResult()).getContracts();
   // const currentFile = await plugin.call('')
-  const compilerContracts = (await plugin.compilersArtefacts.getCompilerAbstract(plugin.REACT_API.contracts.currentFile)).getContracts()
+  let compilerContracts
+  if (plugin.REACT_API.contracts.loadType === 'abi') {
+    compilerContracts = {
+      [plugin.REACT_API.contracts.currentFile]: {
+        [contractName]: {
+          abi: contractABI
+        }
+      }
+    }
+  } else {
+    compilerContracts = (await plugin.compilersArtefacts.getCompilerAbstract(plugin.REACT_API.contracts.currentFile)).getContracts()
+  }
   await bif.runOrCallContractMethod(
     contractName,
     { gasLimit: plugin.REACT_API.gasLimit, sendValue: plugin.REACT_API.sendValue, sendUnit: plugin.REACT_API.sendUnit },
