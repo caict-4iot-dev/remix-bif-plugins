@@ -105,9 +105,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 
   plugin.on('fileManager', 'currentFileChanged', async (currentFile: string) => {
-    if (/.(.abi)$/.exec(currentFile)) {
-      dispatch(setLoadType('abi'))
-    } else if (/.(.jsi)$/.exec(currentFile)) {
+    if (/.(.jsi)$/.exec(currentFile)) {
       dispatch(setLoadType('jsi'));
       const currentContent = JSON.parse(await plugin.call('fileManager', 'readFile', currentFile));
       const sourceCode = await plugin.call('fileManager', 'readFile', currentContent.file);
@@ -119,8 +117,27 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
               alias: currentContent.name,
               file: currentFile,
               compiler: { 
+                abi: currentContent.abi, 
+                deployedBytecode: sourceCode 
+              },
+              compilerName: 'xinghuo',
+            },
+          ],
+        }),
+      );
+    } else if (/.(.js)$/.exec(currentFile)) {
+      dispatch(setLoadType('jsi'));
+      const currentContent = await plugin.call('fileManager', 'readFile', currentFile);
+      dispatch(
+        fetchContractListSuccess({
+          [currentFile]: [
+            {
+              name: 'jsjson',
+              alias: currentFile.replace(/(.*\/)*([^.]+).*/ig,"$2"),
+              file: currentFile,
+              compiler: { 
                 defaultAbi: true,
-                abi: currentContent.abi || [
+                abi: [
                   {
                     "constant": false,
                     "inputs": [
@@ -162,18 +179,13 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
                     "type": "constructor"
                   }
                 ], 
-                deployedBytecode: sourceCode 
+                deployedBytecode: currentContent 
               },
               compilerName: 'xinghuo',
             },
           ],
         }),
       );
-    } else if (/.(.sol)$/.exec(currentFile) ||
-        /.(.vy)$/.exec(currentFile) || // vyper
-        /.(.lex)$/.exec(currentFile) || // lexon
-        /.(.contract)$/.exec(currentFile)) {
-      dispatch(setLoadType('sol'))
     } else {
       dispatch(setLoadType('other'))
     }
