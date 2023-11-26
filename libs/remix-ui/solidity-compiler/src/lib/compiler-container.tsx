@@ -808,12 +808,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               })}
             </select>
           </div>
-          <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
+          {/* <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
             <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
-          </div>
+          </div> */}
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input
               className="remixui_autocompile custom-control-input"
@@ -956,9 +956,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     <option data-id={state.language === 'Solidity' ? 'selected' : ''} value="Solidity">
                       Solidity
                     </option>
-                    <option data-id={state.language === 'Yul' ? 'selected' : ''} value="Yul">
+                    {/* <option data-id={state.language === 'Yul' ? 'selected' : ''} value="Yul">
                       Yul
-                    </option>
+                    </option> */}
                   </select>
                 </div>
               </CustomTooltip>
@@ -1120,7 +1120,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </div>
             </CustomTooltip>
           </button>
-          <div className="d-flex align-items-center">
+          {/* <div className="d-flex align-items-center">
             <button
               id="compileAndRunBtn"
               data-id="compilerContainerCompileAndRunBtn"
@@ -1153,22 +1153,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               tooltipText={
                 <div className="text-left p-2">
                   <div><FormattedMessage id="solidity.tooltipText1" /></div>
-                  <pre>
-                    <code>
-                      /**
-                      <br />
-                      * @title ContractName
-                      <br />
-                      * @dev ContractDescription
-                      <br />
-                      * @custom:dev-run-script file_path
-                      <br />
-                      */
-                      <br />
-                      contract ContractName {'{}'}
-                      <br />
-                    </code>
-                  </pre>
                   <FormattedMessage id="solidity.tooltipText2" />
                 </div>
               }
@@ -1182,7 +1166,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>
             </CopyToClipboard>
-          </div>
+          </div> */}
         </div>
       </article>
     </section>

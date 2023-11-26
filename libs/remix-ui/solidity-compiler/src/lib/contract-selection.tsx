@@ -264,7 +264,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button
+            {/* <button
               id="publishOnIpfs"
               className="btn btn-secondary btn-block"
               onClick={() => {
@@ -328,7 +328,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   <FormattedMessage id="solidity.compilationDetails" />
                 </span>
               </CustomTooltip>
-            </button>
+            </button> */}
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
               <div className="input-group">

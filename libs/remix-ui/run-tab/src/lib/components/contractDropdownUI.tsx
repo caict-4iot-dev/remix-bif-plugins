@@ -379,7 +379,7 @@ export function ContractDropdownUI(props: any) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id="udapp.contract" />
           </label>
-          {compilerName && compilerName !== '' && compilerName !== 'remix' && (
+          {/* {compilerName && compilerName !== '' && compilerName !== 'remix' && (
             <label className="udapp_settingsCompiledBy badge badge-secondary" data-id="udappCompiledBy">
               <FormattedMessage
                 id="udapp.compiledBy"
@@ -388,7 +388,7 @@ export function ContractDropdownUI(props: any) {
                 }}
               />
             </label>
-          )}
+          )} */}
         </div>
         {props.remixdActivated ? (
           <CustomTooltip
@@ -443,7 +443,7 @@ export function ContractDropdownUI(props: any) {
           {abiLabel.content}
         </span>
       </div>
-      {evmVersion && loadedContractData && (
+      {/* {evmVersion && loadedContractData && (
         <CustomTooltip
           placement={'right'}
           tooltipClasses="text-wrap text-left"
@@ -458,7 +458,7 @@ export function ContractDropdownUI(props: any) {
             <FormattedMessage id="udapp.evmVersion" />: {evmVersion}
           </span>
         </CustomTooltip>
-      )}
+      )} */}
       <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter((contract) => contract)) || []).length > 0 && loadedContractData && (

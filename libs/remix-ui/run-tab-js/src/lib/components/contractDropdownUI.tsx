@@ -148,7 +148,7 @@ export function ContractDropdownUI(props: any) {
         disabled: false,
         title: (
           <span className="text-start">
-            <FormattedMessage id="udapp.atAddressOptionsTitle2" values={{ br: <br /> }} />
+            <FormattedMessage id="udapp.js.atAddressOptionsTitle2" values={{ br: <br /> }} />
           </span>
         ),
       })
@@ -156,10 +156,10 @@ export function ContractDropdownUI(props: any) {
       setAtAddressOptions({
         disabled: true,
         title: loadedAddress ? (
-          <FormattedMessage id="udapp.atAddressOptionsTitle3" />
+          <FormattedMessage id="udapp.js.atAddressOptionsTitle3" />
         ) : (
           <span className="text-start">
-            <FormattedMessage id="udapp.atAddressOptionsTitle4" values={{ br: <br /> }} />
+            <FormattedMessage id="udapp.js.atAddressOptionsTitle4" values={{ br: <br /> }} />
           </span>
         ),
       })
@@ -249,7 +249,7 @@ export function ContractDropdownUI(props: any) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if (loadType === 'sol' || loadType === 'abi' || loadType === 'jsi') {
+      if (loadType === 'jsi') {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)
@@ -379,7 +379,7 @@ export function ContractDropdownUI(props: any) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id="udapp.contract" />
           </label>
-          {compilerName && compilerName !== '' && compilerName !== 'remix' && (
+          {/* {compilerName && compilerName !== '' && compilerName !== 'remix' && (
             <label className="udapp_settingsCompiledBy badge badge-secondary" data-id="udappCompiledBy">
               <FormattedMessage
                 id="udapp.compiledBy"
@@ -388,7 +388,7 @@ export function ContractDropdownUI(props: any) {
                 }}
               />
             </label>
-          )}
+          )} */}
         </div>
         {props.remixdActivated ? (
           <CustomTooltip
@@ -443,7 +443,7 @@ export function ContractDropdownUI(props: any) {
           {abiLabel.content}
         </span>
       </div>
-      {evmVersion && loadedContractData && (
+      {/* {evmVersion && loadedContractData && (
         <CustomTooltip
           placement={'right'}
           tooltipClasses="text-wrap text-left"
@@ -458,7 +458,7 @@ export function ContractDropdownUI(props: any) {
             <FormattedMessage id="udapp.evmVersion" />: {evmVersion}
           </span>
         </CustomTooltip>
-      )}
+      )} */}
       <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter((contract) => contract)) || []).length > 0 && loadedContractData && (
