@@ -145,6 +145,9 @@ async function runOrCallContractMethod(
         if (resp.code !== 'SUCCESS') {
           return logCallback(`${logMsg} errored: ${resp.message}`);
         }
+        if (resp.detail.error_code !== 0) {
+          logCallback(`${logMsg} errored: ${resp.detail.error_desc}`);
+        }
         eventsDecoder.parseLogs({}, { logs: resp.detail.logs }, contractName, compilerContracts, (error, logs) => {
           if (error) {
             logCallback(`${error}`);
