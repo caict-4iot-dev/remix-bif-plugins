@@ -65,9 +65,9 @@ yarn build:udapp-js
     "methods": [],
     "name": "bif-solidity",
     "url": "https://bif-solidity.remix-project.cn/",
-    "repo": "https://github.com/drafish/remix-bif-plugins",
-    "documentation": "https://github.com/drafish/remix-bif-plugins/blob/main/apps/solidity-compiler/README.md",
-    "maintainedBy": "drafish"
+    "repo": "https://github.com/caict-4iot-dev/remix-bif-plugins",
+    "documentation": "https://github.com/caict-4iot-dev/remix-bif-plugins/blob/main/apps/solidity-compiler/README.md",
+    "maintainedBy": "caict-4iot-dev"
   },
   {
     "description": "部署、调用星火链网的 solidity 合约",
@@ -78,9 +78,9 @@ yarn build:udapp-js
     "methods": [],
     "name": "bif-udapp",
     "url": "https://bif-udapp.remix-project.cn/",
-    "repo": "https://github.com/drafish/remix-bif-plugins",
-    "documentation": "https://github.com/drafish/remix-bif-plugins/blob/main/apps/udapp/README.md",
-    "maintainedBy": "drafish"
+    "repo": "https://github.com/caict-4iot-dev/remix-bif-plugins",
+    "documentation": "https://github.com/caict-4iot-dev/remix-bif-plugins/blob/main/apps/udapp/README.md",
+    "maintainedBy": "caict-4iot-dev"
   },
   {
     "description": "部署、调用星火链网的 js 合约",
@@ -91,9 +91,9 @@ yarn build:udapp-js
     "methods": [],
     "name": "bif-udapp-js",
     "url": "https://bif-udapp-js.remix-project.cn/",
-    "repo": "https://github.com/drafish/remix-bif-plugins",
-    "documentation": "https://github.com/drafish/remix-bif-plugins/blob/main/apps/udapp-js/README.md",
-    "maintainedBy": "drafish"
+    "repo": "https://github.com/caict-4iot-dev/remix-bif-plugins",
+    "documentation": "https://github.com/caict-4iot-dev/remix-bif-plugins/blob/main/apps/udapp-js/README.md",
+    "maintainedBy": "caict-4iot-dev"
   }
 ]
 ```

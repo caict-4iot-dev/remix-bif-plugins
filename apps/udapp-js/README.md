@@ -34,7 +34,7 @@ JS 合约没有 abi ，如果想获得像 Solidity 那样操作体验，那就�
 2. name 表示合约名称
 3. abi 表示合约接口
 
-具体 abi 该怎么定义，我这里不细说了，可参考 -- [星火链网合约示例](https://github.com/drafish/bif-contracts)
+具体 abi 该怎么定义，我这里不细说了，可参考 -- [星火链网合约示例](https://github.com/caict-4iot-dev/bif-contracts)
 
 准备好 jsi 文件后，确保该文件在编辑器中出于选中状态。后面的操作就和 Solidity 都一样了。
 
