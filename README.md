@@ -1,10 +1,10 @@
 ## 项目简介
 
-这是星火链网 Remix 插件仓库，目前有三个插件
+这是星火链网 Remix 插件仓库，目前有三个插件，操作文档如下
 
-- Solidity 编译器
-- Solidity 部署与调用
-- JS 部署与调用
+- [Solidity 编译器](apps/solidity-compiler/README.md)
+- [Solidity 部署与调用](apps/udapp/README.md)
+- [JS 部署与调用](apps/udapp-js/README.md)
 
 ## 开发环境
 
@@ -19,7 +19,7 @@ yarn serve:udapp-js
 ```
 
 开发环境启动后，打开 Remix IDE ，点击左下角进入插件管理，点击`连接本地插件`，然后输入插件名称和 Url。
-![Alt text](imgs/image.png)
+![Alt text](imgs/connect-local-plugin.png)
 
 各插件的名称和 Url 如下
 
