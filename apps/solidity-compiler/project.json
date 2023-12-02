@@ -15,7 +15,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/solidity-compiler",
         "index": "apps/solidity-compiler/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/solidity-compiler/src/main.tsx",
         "polyfills": "apps/solidity-compiler/src/polyfills.ts",
         "tsConfig": "apps/solidity-compiler/tsconfig.app.json",
@@ -45,6 +45,7 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
+        "baseHref": "/",
         "buildTarget": "solidity-compiler:build"
       },
       "configurations": {

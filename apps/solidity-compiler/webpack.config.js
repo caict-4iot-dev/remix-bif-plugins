@@ -38,7 +38,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   }
 
   // add public path
-  config.output.publicPath = '/'
+  config.output.publicPath = process.env.NODE_ENV !== 'production' ? '/' : './'
 
   // add copy & provide plugin
   config.plugins.push(

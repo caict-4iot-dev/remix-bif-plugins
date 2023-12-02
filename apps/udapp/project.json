@@ -15,7 +15,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/udapp",
         "index": "apps/udapp/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/udapp/src/main.tsx",
         "polyfills": "apps/udapp/src/polyfills.ts",
         "tsConfig": "apps/udapp/tsconfig.app.json",
@@ -45,6 +45,7 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
+        "baseHref": "/",
         "buildTarget": "udapp:build"
       },
       "configurations": {
