@@ -33,6 +33,7 @@
     "build:udapp": "NODE_ENV=production nx build udapp --configuration=production --skip-nx-cache",
     "build:udapp-js": "NODE_ENV=production nx build udapp-js --configuration=production --skip-nx-cache",
     "build:debugger": "NODE_ENV=production nx build debugger --configuration=production --skip-nx-cache",
+    "build:all": "NODE_ENV=production nx run-many --target=build --parallel=false --configuration=production --skip-nx-cache --with-deps=true --projects=solidity-compiler,udapp,udapp-js",
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
