@@ -6,6 +6,10 @@
 - [Solidity 部署与调用](apps/udapp/README.md)
 - [JS 部署与调用](apps/udapp-js/README.md)
 
+Remix 插件开发相关文档如下
+
+- https://remix-plugins-directory.readthedocs.io/en/latest/
+
 ## 开发环境
 
 ```bash
