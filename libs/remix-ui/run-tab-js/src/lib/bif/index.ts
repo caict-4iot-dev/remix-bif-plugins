@@ -51,7 +51,7 @@ async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit},
     },
     provider: 'bif',
   })
-  logViewOnExplorer('http://test-bj-explorer.bitfactory.cn', resp.detail.hash)
+  logViewOnExplorer(resp.detail.hash)
 }
 
 async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, sendUnit}, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any) {
@@ -116,7 +116,7 @@ async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, 
       },
       provider: 'bif',
     })
-    logViewOnExplorer('http://test-bj-explorer.bitfactory.cn', resp.detail.hash)
+    logViewOnExplorer(resp.detail.hash)
   }
 }
 

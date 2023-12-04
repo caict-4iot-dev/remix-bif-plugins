@@ -70,7 +70,7 @@ async function deployContract(selectedContract, { gasLimit, sendValue, sendUnit 
           },
           provider: 'bif',
         });
-        logViewOnExplorer('http://test-bj-explorer.bitfactory.cn', resp.detail.hash);
+        logViewOnExplorer(resp.detail.hash);
       });
     },
     statusCb,
@@ -176,7 +176,7 @@ async function runOrCallContractMethod(
             },
             provider: 'bif',
           });
-          logViewOnExplorer('http://test-bj-explorer.bitfactory.cn', resp.detail.hash);
+          logViewOnExplorer(resp.detail.hash);
         });
       }
     },

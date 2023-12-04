@@ -31,10 +31,10 @@ export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispa
 }
 
 export const logHtml = (msg: string) => terminalLogger(plugin, logBuilder(msg));
-export const logViewOnExplorer = (explorer: string, txHash: string) => {
+export const logViewOnExplorer = (txHash: string) => {
   plugin.call('terminal', 'logHtml', {
     type: 'log',
-    value: logBuildViewOnExplorer(explorer, txHash),
+    value: logBuildViewOnExplorer(plugin.REACT_API.bif.browserUrl, txHash),
   });
 };
 export const logKnownTransaction = (msg: any) => {
