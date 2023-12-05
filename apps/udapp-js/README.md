@@ -39,7 +39,7 @@ JS 合约没有 abi ，如果想获得像 Solidity 那样操作体验，那就�
 ```json
 [
   {
-    "constant": false, // 这个字段应该没啥用，可以不写，但我没测过
+    "constant": false, // 这个字段应该没啥用，可以不写，但我没测过。query 方法写 false ，init 和 main 都写 true
     "inputs": [
       // 这个字段定义输入参数
       {
@@ -49,7 +49,7 @@ JS 合约没有 abi ，如果想获得像 Solidity 那样操作体验，那就�
     ],
     "name": "store", // 这是方法名称
     "outputs": [], // 写方法没有返回值，这里填空数组就可以了
-    "payable": false, // 这个字段应该也没啥用，可以不写，但我没测过
+    "payable": false, // 这个字段应该也没啥用，可以不写，但我没测过。用于表示该方法是否可接受转账区块链的原生货币。先都写 false 吧。
     "stateMutability": "nonpayable", // 这个字段定义方法是 main 还是 query ，main 方法填 nonpayable ，query 方法填 view
     "type": "function" // main 和 query 方法都填 function
   },
