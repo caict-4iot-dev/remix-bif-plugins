@@ -27,7 +27,7 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
     sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress,
     privateKey: privateKey,
     payload: selectedContract.compiler.deployedBytecode,
-    initBalance: sendUnit === 'XHT' ? (sendValue * 100000000).toString() : sendValue,
+    initBalance: sendUnit === 'xht' ? (sendValue * 100000000).toString() : sendValue,
     remarks: '',
     type: 0,
     feeLimit: gasLimit.toString(),
@@ -54,19 +54,21 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
       })
     }, 1000)
   })
-  if (transaction.errorCode === 0) {
-    const newContract = JSON.parse(transaction.result.error_desc)
-    return {
-      code: 'SUCCESS',
-      detail: {
-        ...transaction.result,
-        contractAddress: newContract[0].contract_address,
-        logs: transaction.result.logs.map((log) => ({...log, address: newContract[0].contract_address})),
-      },
-    }
-  } else {
+  if (transaction.errorCode !== 0) {
     return {code: 'ERROR', message: JSON.stringify(transaction)}
   }
+  if (transaction.result.error_code !== 0) {
+    return {code: 'ERROR', message: transaction.result.error_desc}
+  }
+  const newContract = JSON.parse(transaction.result.error_desc);
+  return {
+    code: 'SUCCESS',
+    detail: {
+      ...transaction.result,
+      contractAddress: newContract[0].contract_address,
+      logs: transaction.result.logs.map((log) => ({ ...log, address: newContract[0].contract_address })),
+    },
+  };
 }
 
 export const contractInvoke = async (funABI: any, funArgs: any, address: any, {gasLimit, sendValue, sendUnit}) => {
@@ -84,7 +86,7 @@ export const contractInvoke = async (funABI: any, funArgs: any, address: any, {g
     feeLimit: gasLimit.toString(),
     gasPrice: '1',
     remarks: 'contractInvoke',
-    amount: '0',
+    amount: sendUnit === 'xht' ? (sendValue * 100000000).toString() : sendValue,
     input: JSON.stringify(funABI.defaultAbi ? params['input'] : {method: funABI.name, params}),
   }
   const resp = await sdk.contract.contractInvoke(contractInvokeOperation)
