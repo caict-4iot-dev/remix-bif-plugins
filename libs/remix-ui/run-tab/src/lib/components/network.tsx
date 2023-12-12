@@ -89,7 +89,7 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
       <div style={txMetaRowStyle}>
         <div style={labelStyle}>区块链浏览器地址</div>
         <InputTooltip enabled={editing} text="星火链网区块链浏览器地址，比如：https://test-bj-explorer.bitfactory.cn">
-          <input className="form-control" id="node-url" type="text" disabled={!editing} value={browserUrl} onChange={(e) => setNodeUrl(e.target.value)} />
+          <input className="form-control" id="node-url" type="text" disabled={!editing} value={browserUrl} onChange={(e) => setBrowserUrl(e.target.value)} />
         </InputTooltip>
       </div>
 
