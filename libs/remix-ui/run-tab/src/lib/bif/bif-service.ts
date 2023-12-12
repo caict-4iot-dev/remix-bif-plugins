@@ -34,6 +34,8 @@ export const createContract = async (selectedContract, { gasLimit, sendValue, se
           clearInterval(interval);
           resolve(resp);
         }
+      }).catch(error => {
+        resolve({error});
       });
     }, 1000);
   });
@@ -85,6 +87,8 @@ export const contractInvoke = async (funABI: any, value: any, address: any, data
           clearInterval(interval);
           resolve(resp);
         }
+      }).catch(error => {
+        resolve({error});
       });
     }, 1000);
   });
@@ -109,8 +113,15 @@ export const getTransactionInfo = async (txHash) => {
   if (transaction.contract_tx_hashes) {
     for (let index = 0; index < transaction.contract_tx_hashes.length; index++) {
       const logResp = await sdk.transaction.getTransactionInfo({ hash: transaction.contract_tx_hashes[index] });
-      const logDatas = logResp.result.transactions[0].transaction.operations[0].log.datas;
-      logs.push(JSON.parse(logDatas));
+      const operation = logResp.result.transactions[0].transaction.operations[0]
+      if (operation.log && operation.log.datas) {
+        const logDatas = JSON.parse(operation.log.datas)
+        if (logDatas.data && logDatas.topics) {
+          logs.push(logDatas)
+        }
+      }
+      // const logDatas = logResp.result.transactions[0].transaction.operations[0].log.datas;
+      // logs.push(JSON.parse(logDatas));
     }
     logs.forEach((log) => {
       log.data = '0x' + log.data;
