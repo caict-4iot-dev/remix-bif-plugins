@@ -22,7 +22,12 @@ export const createContract = async (selectedContract, {gasLimit, sendValue, sen
   const sdk = new BIFCoreSDK({
     host: nodeUrl,
   })
-  const params = parseParams(constructor.inputs, funArgs)
+  let params
+  try {
+    params = parseParams(constructor.inputs, funArgs)
+  } catch (error) {
+    return {code: 'ERROR', message: `params error: ${error}`}
+  }
   const createContractOperation = {
     sourceAddress: sdk.keypair.privateKeyManagerByKey(privateKey).encAddress,
     privateKey: privateKey,
@@ -77,7 +82,12 @@ export const contractInvoke = async (funABI: any, funArgs: any, address: any, {g
     host: nodeUrl,
   })
   const sourceAddress = sdk.keypair.privateKeyManagerByKey(privateKey).encAddress
-  const params = parseParams(funABI.inputs, funArgs)
+  let params
+  try {
+    params = parseParams(funABI.inputs, funArgs)
+  } catch (error) {
+    return {code: 'ERROR', message: `params error: ${error}`}
+  }
   const contractInvokeOperation = {
     sourceAddress: sourceAddress,
     privateKey: privateKey,
@@ -141,7 +151,12 @@ export const contractQuery = async (funABI: any, funArgs: any, address: any) => 
   const sdk = new BIFCoreSDK({
     host: nodeUrl,
   })
-  const params = parseParams(funABI.inputs, funArgs)
+  let params
+  try {
+    params = parseParams(funABI.inputs, funArgs)
+  } catch (error) {
+    return {code: 'ERROR', message: `params error: ${error}`}
+  }
   const contractQueryOperation = {
     sourceAddress: '',
     contractAddress: address,
