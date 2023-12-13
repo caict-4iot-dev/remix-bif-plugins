@@ -1,5 +1,5 @@
 import { execution } from '@remix-project/remix-lib';
-import { logKnownTransaction, logViewOnExplorer } from '../actions';
+import { logKnownTransaction, logViewOnExplorer, setBif } from '../actions';
 import { EventsDecoder } from './eventsDecoder';
 import { createContract, contractInvoke, contractQuery } from './bif-service';
 
@@ -34,8 +34,10 @@ async function deployContract(selectedContract, { gasLimit, sendValue, sendUnit 
         return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`);
       }
 
+      setBif({txStatus: 'pending'})
       statusCb(`creation of ${selectedContract.name} pending...`);
       const resp = await createContract(selectedContract, { gasLimit, sendValue, sendUnit }, args, { contractBytecode: data.contractBytecode, dataHex: data.dataHex });
+      setBif({txStatus: 'finished'})
       if (resp.code !== 'SUCCESS') {
         return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
       }
@@ -108,6 +110,7 @@ async function runOrCallContractMethod(
         return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`);
       }
       if (!lookupOnly) {
+        setBif({txStatus: 'pending'})
         logCallback(`${logMsg} pending ... `);
       } else {
         logCallback(`${logMsg}`);
@@ -142,6 +145,7 @@ async function runOrCallContractMethod(
         });
       } else {
         const resp = await contractInvoke(funABI, value, address, data.dataHex, {gasLimit, sendValue, sendUnit});
+        setBif({txStatus: 'finished'})
         if (resp.code !== 'SUCCESS') {
           return logCallback(`${logMsg} errored: ${resp.message}`);
         }

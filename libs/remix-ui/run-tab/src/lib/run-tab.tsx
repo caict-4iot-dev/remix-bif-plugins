@@ -312,6 +312,7 @@ export function RunTabUI(props: RunTabProps) {
             isValidProxyUpgrade={isValidProxyUpgrade}
             proxy={runTab.proxy}
             bifStatus={runTab.bif.status}
+            txStatus={runTab.bif.txStatus}
           />
           {/* <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
@@ -334,6 +335,8 @@ export function RunTabUI(props: RunTabProps) {
             runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
             getFuncABIInputs={getFuncABIValues}
+            bifStatus={runTab.bif.status}
+            txStatus={runTab.bif.txStatus}
           />
         </div>
       </div>

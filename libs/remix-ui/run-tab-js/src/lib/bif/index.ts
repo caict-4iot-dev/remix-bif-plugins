@@ -1,5 +1,5 @@
 import {execution} from '@remix-project/remix-lib'
-import {logKnownTransaction, logViewOnExplorer} from '../actions'
+import {logKnownTransaction, logViewOnExplorer, setBif} from '../actions'
 import {EventsDecoder} from './eventsDecoder'
 import {createContract, contractInvoke, contractQuery} from './bif-service'
 
@@ -20,9 +20,11 @@ function getinputParameters(value) {
 
 async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit}, args, contractMetadata, callbacks, confirmationCb) {
   const {continueCb, promptCb, statusCb, finalCb} = callbacks
+  setBif({txStatus: 'pending'})
   statusCb(`creation of ${selectedContract.name} pending...`)
   const funArgs = eventsDecoder._parseFunctionParams(args)
   const resp = await createContract(selectedContract, {gasLimit, sendValue, sendUnit}, funArgs)
+  setBif({txStatus: 'finished'})
   if (resp.code !== 'SUCCESS') {
     return statusCb(`creation of ${selectedContract.name} errored: ${resp.message}`);
   }
@@ -56,6 +58,7 @@ async function deployContract(selectedContract, {gasLimit, sendValue, sendUnit},
 
 async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, sendUnit}, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any) {
   if (!lookupOnly) {
+    setBif({txStatus: 'pending'})
     logCallback(`${logMsg} pending ... `)
   } else {
     logCallback(`${logMsg}`)
@@ -87,6 +90,7 @@ async function runOrCallContractMethod(contractName: any, {gasLimit, sendValue, 
     })
   } else {
     const resp = await contractInvoke(funABI, funArgs, address, {gasLimit, sendValue, sendUnit})
+    setBif({txStatus: 'finished'})
     if (resp.code !== 'SUCCESS') {
       return logCallback(`${logMsg} errored: ${resp.message}`);
     }

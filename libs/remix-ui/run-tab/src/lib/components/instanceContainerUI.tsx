@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { InstanceContainerProps } from '../types'
 import { UniversalDappUI } from './universalDappUI'
 
-export function InstanceContainerUI(props: InstanceContainerProps) {
+export function InstanceContainerUI(props: any) {
   const { instanceList } = props.instances
 
   const clearInstance = () => {
@@ -50,6 +50,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 runTransactions={props.runTransactions}
                 sendValue={props.sendValue}
                 getFuncABIInputs={props.getFuncABIInputs}
+                bifStatus={props.bifStatus}
+                txStatus={props.txStatus}
               />
             )
           })}

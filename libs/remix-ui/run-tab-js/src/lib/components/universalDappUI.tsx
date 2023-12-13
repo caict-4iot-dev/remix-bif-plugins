@@ -13,7 +13,7 @@ import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} f
 
 const txHelper = remixLib.execution.txHelper
 
-export function UniversalDappUI(props: UdappProps) {
+export function UniversalDappUI(props: any) {
   const intl = useIntl()
   const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [contractABI, setContractABI] = useState<FuncABI[]>(null)
@@ -258,6 +258,7 @@ export function UniversalDappUI(props: UdappProps) {
                     evmBC={evmBC}
                     lookupOnly={lookupOnly}
                     key={index}
+                    disabled={!lookupOnly && (props.bifStatus !== 'Connected' || props.txStatus === 'pending')}
                   />
                   {lookupOnly && (
                     <div className="udapp_value" data-id="udapp_value">
