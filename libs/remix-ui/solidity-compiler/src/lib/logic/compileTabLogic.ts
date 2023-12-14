@@ -1,6 +1,7 @@
 import { ICompilerApi } from '@remix-project/remix-lib'
 import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
 import { EventEmitter } from 'events'
+import bs58 from 'bs58';
 
 declare global {
   interface Window {
@@ -8,6 +9,34 @@ declare global {
   }
 }
 const _paq = window._paq = window._paq || []  //eslint-disable-line
+
+function fromBidAddress(address) {
+  const bytes = bs58.decode(address.substring(10))
+  const hex = Buffer.from(bytes).toString('hex')
+  address = '6566' + hex
+  return address;
+}
+
+function bidAddressReplace(context) {
+  let posStart = 0;
+  let posEnd = 0;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    posStart = context.indexOf("did:bid", posEnd);
+    if (posStart !== -1) {
+      posEnd = 0;
+      posEnd = context.indexOf(";", posStart);
+      const oldbidAddress = context.substring(posStart, posEnd);
+      console.log("oldbidAddress:" + oldbidAddress);
+      const newbidAddress = fromBidAddress(oldbidAddress);
+      console.log("newbidAddress:" + newbidAddress);
+      context = context.replace(oldbidAddress, "0x" + newbidAddress);
+    } else {
+      break;
+    }
+  }
+  return context;
+}
 
 export class CompileTabLogic {
   public compiler
@@ -108,7 +137,7 @@ export class CompileTabLogic {
     if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then(async(content) => {
-        const sources = { [target]: { content } }
+        const sources = { [target]: { content: bidAddressReplace(content) } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
         if(await this.api.fileExists('remappings.txt')) {
