@@ -1,5 +1,7 @@
 ## 星火链网 Solidity 合约部署与调用
 
+懒得看文档的朋友直接看教学视频吧 -- https://www.bilibili.com/video/BV1Ni4y1h7Yw
+
 ![Alt text](../../imgs/active-udapp.png)
 
 1. 点击左下角插件管理，进入插件管理模块

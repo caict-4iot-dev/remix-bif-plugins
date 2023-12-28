@@ -1,5 +1,7 @@
 ## 星火链网 JS 合约部署与调用
 
+懒得看文档的朋友直接看教学视频吧 -- https://www.bilibili.com/video/BV1uQ4y1g7CH
+
 ![Alt text](../../imgs/active-udapp-js.png)
 
 1. 点击左下角插件管理，进入插件管理模块
