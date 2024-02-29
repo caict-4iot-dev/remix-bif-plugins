@@ -1,0 +1,13 @@
+diff --git a/node_modules/bifcore-sdk-nodejs/lib/contract/index.js b/node_modules/bifcore-sdk-nodejs/lib/contract/index.js
+index 882e84e..a8769a1 100644
+--- a/node_modules/bifcore-sdk-nodejs/lib/contract/index.js
++++ b/node_modules/bifcore-sdk-nodejs/lib/contract/index.js
+@@ -162,7 +162,7 @@ class Contract {
+             return util._responseError(errors.REQUEST_NULL_ERROR)
+         }
+         let { sourceAddress, privateKey, payload, initBalance, remarks, type, feeLimit, gasPrice, ceilLedgerSeq, initInput, domainId } = request
+-        if (!util._verifyValue(initBalance)) {
++        if (!util._isAvailableValue(initBalance)) {
+             return util._responseError(errors.INVALID_INITBALANCE_ERROR)
+         }
+         if (ceilLedgerSeq != null && ceilLedgerSeq != '' && !util._isAvailableValue(ceilLedgerSeq)) {
