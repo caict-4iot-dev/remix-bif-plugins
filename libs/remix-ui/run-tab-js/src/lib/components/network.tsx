@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Popover from 'react-bootstrap/Popover'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import {logHtml} from '../actions'
-import { getAccountBalance } from '../bif/bif-service'
+import {getAccountBalance} from '../bif/bif-service'
 
 export const InputTooltip = ({text, enabled = true, children}: any) => {
   if (!enabled) {
@@ -27,9 +27,11 @@ export const InputTooltip = ({text, enabled = true, children}: any) => {
 export function NetworkUI(props: {bif: any; setBif: any}) {
   const [editing, setEditing] = useState(false)
   const [status, setStatus] = useState('Disconnected')
-  const [nodeUrl, setNodeUrl] = useState('http://test.bifcore.bitfactory.cn')
+  const [nodeUrl, setNodeUrl] = useState('http://domestic-testnet.bitfactory.cn')
   const [browserUrl, setBrowserUrl] = useState('https://test-bj-explorer.bitfactory.cn')
   const [privateKey, setPrivateKey] = useState('')
+  const [apiKey, setApiKey] = useState('')
+  const [apiSecret, setApiSecret] = useState('')
   const [balance, setBalance] = useState(0)
 
   const {bif, setBif} = props
@@ -40,6 +42,8 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
     setPrivateKey(bif.privateKey)
     setStatus(bif.status)
     setBalance(bif.balance)
+    setApiKey(bif.apiKey)
+    setApiSecret(bif.setApiSecret)
   }, [bif])
 
   const onEdit = () => {
@@ -50,11 +54,13 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
     setNodeUrl(bif.nodeUrl)
     setBrowserUrl(bif.browserUrl)
     setPrivateKey(bif.privateKey)
+    setApiKey(bif.apiKey)
+    setApiSecret(bif.setApiSecret)
   }
   const onSave = async () => {
     setStatus('Connecting...')
 
-    const resp = await getAccountBalance(nodeUrl, privateKey)
+    const resp = await getAccountBalance(nodeUrl, privateKey, apiKey, apiSecret)
     if (resp.code !== 'SUCCESS') {
       setStatus('Disconnected')
       logHtml(resp.message)
@@ -70,6 +76,8 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
       privateKey,
       status: 'Connected',
       balance: resp.detail,
+      apiKey,
+      apiSecret,
     })
   }
 
@@ -96,7 +104,21 @@ export function NetworkUI(props: {bif: any; setBif: any}) {
       <div style={txMetaRowStyle}>
         <div style={labelStyle}>私钥</div>
         <InputTooltip enabled={editing} text="星火链网私钥">
-          <input type='password' className="form-control" id="private-key" disabled={!editing} value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />
+          <input type="password" className="form-control" id="private-key" disabled={!editing} value={privateKey} onChange={(e) => setPrivateKey(e.target.value)} />
+        </InputTooltip>
+      </div>
+
+      <div style={txMetaRowStyle}>
+        <div style={labelStyle}>API Key</div>
+        <InputTooltip enabled={editing} text="星火链网 API Key">
+          <input type="password" className="form-control" id="private-key" disabled={!editing} value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+        </InputTooltip>
+      </div>
+
+      <div style={txMetaRowStyle}>
+        <div style={labelStyle}>API Secret</div>
+        <InputTooltip enabled={editing} text="星火链网 API Secret">
+          <input type="password" className="form-control" id="private-key" disabled={!editing} value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} />
         </InputTooltip>
       </div>
       <div style={txMetaRowStyle}>

@@ -1,0 +1,51 @@
+diff --git a/node_modules/bifcore-sdk-nodejs-bop/lib/query/index.js b/node_modules/bifcore-sdk-nodejs-bop/lib/query/index.js
+index 37e769a..326bf7e 100644
+--- a/node_modules/bifcore-sdk-nodejs-bop/lib/query/index.js
++++ b/node_modules/bifcore-sdk-nodejs-bop/lib/query/index.js
+@@ -17,11 +17,12 @@ class Query {
+     async _get (method, params) {
+         const options = {
+             method: 'GET',
+-            uri: `${this.host}/base/${this.apiKey}/${method}?${params}`,
++            uri: `${location.origin}/api/base/${this.apiKey}/${method}?${params}`,
+             // json: true,
+             headers: {
+                 'Content-Type': 'application/json', //  header
+                 'api-secret': `${this.apiSecret}`,    // Another custom header
++                ProxyAddress: this.host,
+             },
+             timeout: 4000
+         }
+@@ -32,12 +33,13 @@ class Query {
+     async _post (method, paramsJson) {
+         const options = {
+             method: 'POST',
+-            uri: `${this.host}/base/${this.apiKey}/${method}`,
++            uri: `${location.origin}/api/base/${this.apiKey}/${method}`,
+             body: paramsJson,
+             json: true,
+             headers: {
+                 'Content-Type': 'application/json', //  header
+                 'api-secret': `${this.apiSecret}`,    // Another custom header
++                ProxyAddress: this.host,
+             },
+             timeout: 4000
+         }
+diff --git a/node_modules/bifcore-sdk-nodejs-bop/lib/transaction/index.js b/node_modules/bifcore-sdk-nodejs-bop/lib/transaction/index.js
+index bf4414c..f8d0028 100644
+--- a/node_modules/bifcore-sdk-nodejs-bop/lib/transaction/index.js
++++ b/node_modules/bifcore-sdk-nodejs-bop/lib/transaction/index.js
+@@ -572,11 +572,12 @@ class Transaction {
+         }
+         const options = {
+             method: 'POST',
+-            uri: `${this.host}/base/${this.apiKey}/submitTransaction`,
++            uri: `${location.origin}/api/base/${this.apiKey}/submitTransaction`,
+             body: postData,
+             headers: {
+                 'Content-Type': 'application/json', //  header
+                 'api-secret': `${this.apiSecret}`,    // Another custom header
++                ProxyAddress: this.host,
+             },
+             json: true
+         }

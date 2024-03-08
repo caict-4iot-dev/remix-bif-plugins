@@ -91,7 +91,7 @@
     "assert": "^2.1.0",
     "async": "^2.6.2",
     "axios": "1.1.2",
-    "bifcore-sdk-nodejs": "^1.0.6",
+    "bifcore-sdk-nodejs-bop": "^1.0.1",
     "bn.js": "^5.1.2",
     "bootstrap": "^5.2.2",
     "brace": "^0.8.0",
