@@ -72,7 +72,7 @@ export const runTabInitialState: RunTabState = {
     deployments: []
   },
   bif: localStorage.getItem('bif')
-    ? JSON.parse(localStorage.getItem('bif'))
+    ? Object.assign(JSON.parse(localStorage.getItem('bif')), { txStatus: "finished" })
     : {
       nodeUrl: '',
       privateKey: '',
